@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steering System — Alignment Tech</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c0f;
+    --surface: #111417;
+    --panel: #161a1f;
+    --border: #252b33;
+    --accent: #e8a320;
+    --accent2: #4da8e8;
+    --accent3: #5ee87a;
+    --accent4: #e85e8a;
+    --text: #d4dbe6;
+    --muted: #6b7a8d;
+    --highlight: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== HEADER ===== */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 48px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: rgba(10,12,15,0.97);
+    backdrop-filter: blur(12px);
+    z-index: 200;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: var(--accent);
+  }
+  .logo span { color: var(--text); }
+
+  nav {
+    display: flex;
+    gap: 28px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  nav a:hover { color: var(--accent); }
+
+  /* ===== HERO ===== */
+  .hero {
+    padding: 80px 48px 56px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(232,163,32,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 7vw, 88px);
+    line-height: 0.92;
+    letter-spacing: 2px;
+    color: var(--highlight);
+    margin-bottom: 24px;
+  }
+  .hero h1 em { color: var(--accent); font-style: normal; }
+  .hero-desc {
+    max-width: 600px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--muted);
+    font-weight: 300;
+    margin-bottom: 32px;
+  }
+  .hero-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .hero-nav a {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    transition: all 0.2s;
+  }
+  .hero-nav a:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  /* ===== SECTION HEADINGS ===== */
+  .section-wrap {
+    padding: 64px 48px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+  .section-head h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    letter-spacing: 1px;
+    color: var(--highlight);
+  }
+  .section-head span {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ===== DIAGRAM PANELS ===== */
+  .diagram-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .diagram-panel {
+    background: var(--surface);
+    padding: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .diagram-panel::before {
+    content: attr(data-index);
+    position: absolute;
+    top: 24px; right: 32px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 96px;
+    color: rgba(255,255,255,0.025);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+  .panel-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--accent);
+    padding: 4px 12px;
+    margin-bottom: 20px;
+  }
+  .diagram-panel:nth-child(2) .panel-tag { background: var(--accent2); }
+  .panel-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 38px;
+    letter-spacing: 1px;
+    color: var(--highlight);
+    margin-bottom: 6px;
+  }
+  .panel-subtitle {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-bottom: 32px;
+  }
+  .svg-wrap {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px 20px;
+    margin-bottom: 32px;
+  }
+  svg { width: 100%; height: auto; display: block; }
+
+  .callout-list { display: flex; flex-direction: column; gap: 0; }
+  .callout-item {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 14px;
+    align-items: start;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .callout-item:last-child { border-bottom: none; }
+  .callout-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--bg);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .diagram-panel:nth-child(2) .callout-num { background: var(--accent2); }
+  .callout-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--highlight);
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .callout-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+    font-weight: 300;
+  }
+
+  /* ===== COMPARISON TABLE ===== */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead tr { border-bottom: 2px solid var(--border); }
+  thead th {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 0 16px;
+    text-align: left;
+    font-weight: 400;
+  }
+  thead th:first-child { color: var(--text); }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+  tbody tr:hover { background: var(--surface); }
+  tbody td {
+    padding: 14px 0;
+    color: var(--text);
+    vertical-align: top;
+    line-height: 1.5;
+    padding-right: 20px;
+  }
+  tbody td:first-child {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    width: 160px;
+  }
+  .badge {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+  .badge-outer { background: rgba(232,163,32,0.15); color: var(--accent); }
+  .badge-inner { background: rgba(77,168,232,0.15); color: var(--accent2); }
+  .badge-knuckle { background: rgba(94,232,122,0.15); color: var(--accent3); }
+  .badge-rack { background: rgba(232,94,138,0.15); color: var(--accent4); }
+
+  /* ===== TORQUE SPECS ===== */
+  .torque-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2px;
+    background: var(--border);
+    margin-bottom: 32px;
+  }
+  .torque-card {
+    background: var(--surface);
+    padding: 28px;
+    position: relative;
+  }
+  .torque-card-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .torque-card-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 1px;
+    color: var(--highlight);
+    margin-bottom: 20px;
+  }
+  .torque-spec {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .torque-spec:last-child { border-bottom: none; }
+  .torque-spec-name { color: var(--muted); font-size: 12px; }
+  .torque-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .torque-card:nth-child(2) .torque-value { color: var(--accent2); }
+  .torque-card:nth-child(3) .torque-value { color: var(--accent3); }
+  .torque-card:nth-child(4) .torque-value { color: var(--accent4); }
+
+  .torque-note {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    background: rgba(232,163,32,0.05);
+    border: 1px solid rgba(232,163,32,0.2);
+    border-radius: 3px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .torque-note-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ===== DIAGNOSTIC CHECKLIST ===== */
+  .checklist-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  .checklist-group { }
+  .checklist-group-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+    color: var(--highlight);
+    margin-bottom: 4px;
+  }
+  .checklist-group-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .check-item:hover { background: rgba(255,255,255,0.01); }
+  .check-item:last-child { border-bottom: none; }
+  .check-box {
+    width: 20px; height: 20px;
+    border: 1.5px solid var(--border);
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    background: var(--panel);
+  }
+  .check-item.checked .check-box {
+    background: var(--accent3);
+    border-color: var(--accent3);
+  }
+  .check-item.checked .check-box::after {
+    content: '✓';
+    font-size: 12px;
+    color: var(--bg);
+    font-weight: 700;
+  }
+  .check-item.checked .check-text { color: var(--muted); text-decoration: line-through; opacity: 0.5; }
+  .check-text { font-size: 13px; color: var(--text); line-height: 1.5; flex: 1; }
+  .check-severity {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 1px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    margin-top: 3px;
+    align-self: flex-start;
+  }
+  .sev-critical { background: rgba(232,94,94,0.2); color: #e85e5e; }
+  .sev-high { background: rgba(232,163,32,0.2); color: var(--accent); }
+  .sev-medium { background: rgba(77,168,232,0.2); color: var(--accent2); }
+  .sev-low { background: rgba(94,232,122,0.15); color: var(--accent3); }
+
+  .checklist-progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+    padding: 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+  }
+  .progress-bar-wrap {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--accent3);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .progress-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+  .progress-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent3);
+    font-weight: 500;
+  }
+
+  /* ===== ANIMATED SUSPENSION ===== */
+  .suspension-section {
+    padding: 64px 48px;
+    border-bottom: 1px solid var(--border);
+  }
+  .suspension-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+  .suspension-controls {
+    display: flex;
+    gap: 12px;
+    padding: 20px 28px;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .ctrl-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 8px 18px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .ctrl-btn:hover, .ctrl-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+  }
+  .ctrl-btn.active-blue {
+    background: var(--accent2);
+    border-color: var(--accent2);
+    color: var(--bg);
+  }
+  .ctrl-sep {
+    width: 1px;
+    height: 24px;
+    background: var(--border);
+  }
+  .ctrl-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  .anim-canvas-wrap {
+    position: relative;
+    background: var(--panel);
+  }
+  #suspCanvas {
+    display: block;
+    width: 100%;
+    height: 420px;
+  }
+  .anim-legend {
+    display: flex;
+    gap: 24px;
+    padding: 16px 28px;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+
+  /* ===== RACK ASSEMBLY ===== */
+  .rack-panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--border);
+  }
+  .rack-panel {
+    background: var(--surface);
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .rack-panel::before {
+    content: attr(data-index);
+    position: absolute;
+    top: 24px; right: 32px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 80px;
+    color: rgba(255,255,255,0.025);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .rack-panel .panel-tag { background: var(--accent3); }
+  .rack-panels .rack-panel:nth-child(2) .panel-tag { background: var(--accent4); }
+
+  /* ===== SYMPTOMS ===== */
+  .symptoms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 2px;
+    background: var(--border);
+  }
+  .symptom-card {
+    background: var(--surface);
+    padding: 32px;
+    border-top: 3px solid var(--accent);
+  }
+  .symptoms-grid .symptom-card:nth-child(2) { border-top-color: var(--accent2); }
+  .symptoms-grid .symptom-card:nth-child(3) { border-top-color: var(--accent3); }
+  .symptoms-grid .symptom-card:nth-child(4) { border-top-color: var(--accent4); }
+  .symptom-card h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+    color: var(--highlight);
+    margin-bottom: 16px;
+  }
+  .symptom-item {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+    align-items: flex-start;
+  }
+  .symptom-item:last-child { border-bottom: none; }
+  .sym-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+  .symptom-card:nth-child(2) .sym-dot { background: var(--accent2); }
+  .symptom-card:nth-child(3) .sym-dot { background: var(--accent3); }
+  .symptom-card:nth-child(4) .sym-dot { background: var(--accent4); }
+
+  /* ===== FOOTER ===== */
+  footer {
+    padding: 28px 48px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  header, .hero { animation: fadeUp 0.5s ease both; }
+  .diagram-section, .section-wrap, .suspension-section { animation: fadeUp 0.6s ease 0.1s both; }
+
+  @media (max-width: 900px) {
+    header { padding: 16px 20px; }
+    nav { display: none; }
+    .hero, .section-wrap, .suspension-section { padding: 40px 20px; }
+    .diagram-section, .rack-panels, .symptoms-grid { grid-template-columns: 1fr; }
+    .diagram-panel, .rack-panel { padding: 28px 20px; }
+    .checklist-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Alignment<span>Tech</span></div>
+  <nav>
+    <a href="#components">Components</a>
+    <a href="#torque">Torque Specs</a>
+    <a href="#suspension">Animation</a>
+    <a href="#rack">Rack Assembly</a>
+    <a href="#diagnostics">Diagnostics</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-label">Steering System / Complete Reference Guide</div>
+  <h1>Steering<br><em>System</em><br>Components</h1>
+  <p class="hero-desc">Complete technical reference covering inner &amp; outer tie rods, steering knuckle, rack &amp; pinion assembly — with torque specifications, animated suspension movement, and full diagnostic checklists.</p>
+  <div class="hero-nav">
+    <a href="#components">Tie Rods</a>
+    <a href="#torque">Torque Specs</a>
+    <a href="#suspension">Live Animation</a>
+    <a href="#rack">Rack &amp; Knuckle</a>
+    <a href="#diagnostics">Diagnostics</a>
+    <a href="#symptoms">Failure Modes</a>
+  </div>
+</section>
+
+<!-- TIE ROD DIAGRAMS -->
+<div id="components">
+<section class="diagram-section">
+  <!-- OUTER TIE ROD -->
+  <div class="diagram-panel" data-index="01">
+    <div class="panel-tag">Component 01</div>
+    <div class="panel-title">Outer Tie Rod</div>
+    <div class="panel-subtitle">Also known as tie rod end</div>
+    <div class="svg-wrap">
+      <svg viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="grid1" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="0.5"/>
+          </pattern>
+          <marker id="arr-amber" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#e8a320"/>
+          </marker>
+        </defs>
+        <rect width="440" height="200" fill="url(#grid1)"/>
+        <rect x="60" y="88" width="180" height="24" rx="3" fill="#1e2530" stroke="#2e3a48" stroke-width="1.5"/>
+        <line x1="80" y1="88" x2="80" y2="112" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="96" y1="88" x2="96" y2="112" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="112" y1="88" x2="112" y2="112" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="128" y1="88" x2="128" y2="112" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="144" y1="88" x2="144" y2="112" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="160" y1="88" x2="160" y2="112" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="176" y1="88" x2="176" y2="112" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="192" y1="88" x2="192" y2="112" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="208" y1="88" x2="208" y2="112" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="224" y1="88" x2="224" y2="112" stroke="#2e3a48" stroke-width="1"/>
+        <rect x="56" y="84" width="24" height="32" rx="2" fill="#2a3342" stroke="#3d4f66" stroke-width="1.5"/>
+        <line x1="56" y1="96" x2="80" y2="96" stroke="#3d4f66" stroke-width="1"/>
+        <line x1="56" y1="104" x2="80" y2="104" stroke="#3d4f66" stroke-width="1"/>
+        <rect x="20" y="80" width="42" height="40" rx="4" fill="#243040" stroke="#3d4f66" stroke-width="1.5"/>
+        <circle cx="41" cy="100" r="10" fill="#1a2535" stroke="#e8a320" stroke-width="1.5"/>
+        <circle cx="41" cy="100" r="4" fill="#e8a320" opacity="0.8"/>
+        <ellipse cx="270" cy="100" rx="30" ry="22" fill="#243040" stroke="#3d4f66" stroke-width="1.5"/>
+        <ellipse cx="270" cy="100" rx="14" ry="14" fill="#1a2535" stroke="#e8a320" stroke-width="1.5"/>
+        <circle cx="270" cy="100" r="7" fill="#e8a320" opacity="0.9"/>
+        <rect x="264" y="112" width="12" height="32" rx="3" fill="#2a3342" stroke="#3d4f66" stroke-width="1.5"/>
+        <circle cx="270" cy="138" r="3" fill="#0a0c0f" stroke="#3d4f66"/>
+        <path d="M242 118 Q270 128 298 118" fill="none" stroke="#4da8e8" stroke-width="2" stroke-dasharray="3,2"/>
+        <path d="M242 118 L242 112 Q270 122 298 112 L298 118" fill="rgba(77,168,232,0.12)" stroke="#4da8e8" stroke-width="1"/>
+        <line x1="150" y1="88" x2="150" y2="52" stroke="#e8a320" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-amber)"/>
+        <circle cx="150" cy="42" r="10" fill="#e8a320"/>
+        <text x="150" y="46" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">1</text>
+        <line x1="68" y1="84" x2="52" y2="54" stroke="#e8a320" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-amber)"/>
+        <circle cx="46" cy="44" r="10" fill="#e8a320"/>
+        <text x="46" y="48" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">2</text>
+        <line x1="270" y1="86" x2="310" y2="52" stroke="#e8a320" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-amber)"/>
+        <circle cx="316" cy="42" r="10" fill="#e8a320"/>
+        <text x="316" y="46" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">3</text>
+        <line x1="270" y1="125" x2="340" y2="155" stroke="#e8a320" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-amber)"/>
+        <circle cx="346" cy="161" r="10" fill="#e8a320"/>
+        <text x="346" y="165" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">4</text>
+        <line x1="276" y1="140" x2="310" y2="165" stroke="#e8a320" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-amber)"/>
+        <circle cx="316" cy="171" r="10" fill="#e8a320"/>
+        <text x="316" y="175" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">5</text>
+        <text x="30" y="168" font-family="DM Mono" font-size="9" fill="#6b7a8d" letter-spacing="1">← TO RACK</text>
+        <text x="338" y="168" font-family="DM Mono" font-size="9" fill="#6b7a8d" letter-spacing="1" text-anchor="end">TO KNUCKLE →</text>
+      </svg>
+    </div>
+    <div class="callout-list">
+      <div class="callout-item"><div class="callout-num">1</div><div><div class="callout-name">Threaded Shaft</div><div class="callout-desc">Adjustable threaded rod. Thread engagement controls toe adjustment — turning changes wheel alignment angle.</div></div></div>
+      <div class="callout-item"><div class="callout-num">2</div><div><div class="callout-name">Lock / Jam Nut</div><div class="callout-desc">Hex nut that locks the outer tie rod after alignment is set. Must be retorqued after any toe adjustment.</div></div></div>
+      <div class="callout-item"><div class="callout-num">3</div><div><div class="callout-name">Ball Joint Housing</div><div class="callout-desc">Articulating ball-and-socket assembly allowing multi-axis movement across suspension travel and steering input.</div></div></div>
+      <div class="callout-item"><div class="callout-num">4</div><div><div class="callout-name">Dust Boot</div><div class="callout-desc">Rubber bellows protecting the ball joint from contamination. Cracked boots accelerate joint failure significantly.</div></div></div>
+      <div class="callout-item"><div class="callout-num">5</div><div><div class="callout-name">Tapered Stud &amp; Cotter Pin</div><div class="callout-desc">Morse-taper pin seats into the steering knuckle. Cotter pin prevents castle nut from backing off under vibration.</div></div></div>
+    </div>
+  </div>
+
+  <!-- INNER TIE ROD -->
+  <div class="diagram-panel" data-index="02">
+    <div class="panel-tag">Component 02</div>
+    <div class="panel-title">Inner Tie Rod</div>
+    <div class="panel-subtitle">Also known as rack end</div>
+    <div class="svg-wrap">
+      <svg viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="grid2" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="0.5"/>
+          </pattern>
+          <marker id="arr-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#4da8e8"/>
+          </marker>
+        </defs>
+        <rect width="440" height="200" fill="url(#grid2)"/>
+        <rect x="10" y="85" width="100" height="30" rx="2" fill="#1a2535" stroke="#2e3a48" stroke-width="1.5"/>
+        <rect x="10" y="85" width="100" height="12" rx="2" fill="#1e2d3f"/>
+        <line x1="25" y1="85" x2="25" y2="97" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="40" y1="85" x2="40" y2="97" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="55" y1="85" x2="55" y2="97" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="70" y1="85" x2="70" y2="97" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="85" y1="85" x2="85" y2="97" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="100" y1="85" x2="100" y2="97" stroke="#2e3a48" stroke-width="1"/>
+        <text x="55" y="109" font-family="DM Mono" font-size="8" fill="#4d5f75" text-anchor="middle" letter-spacing="2">RACK</text>
+        <rect x="108" y="76" width="50" height="48" rx="4" fill="#243040" stroke="#4da8e8" stroke-width="2"/>
+        <line x1="108" y1="88" x2="158" y2="88" stroke="#3d4f66" stroke-width="1"/>
+        <line x1="108" y1="100" x2="158" y2="100" stroke="#3d4f66" stroke-width="1"/>
+        <line x1="108" y1="112" x2="158" y2="112" stroke="#3d4f66" stroke-width="1"/>
+        <rect x="95" y="88" width="16" height="24" rx="2" fill="#1e2d3f" stroke="#3d4f66" stroke-width="1"/>
+        <circle cx="190" cy="100" r="24" fill="#1e2d3f" stroke="#4da8e8" stroke-width="2"/>
+        <circle cx="190" cy="100" r="14" fill="#162030" stroke="#3d4f66" stroke-width="1"/>
+        <circle cx="190" cy="100" r="8" fill="#4da8e8" opacity="0.85"/>
+        <line x1="182" y1="100" x2="198" y2="100" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+        <line x1="190" y1="92" x2="190" y2="108" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+        <path d="M158 80 Q168 78 190 76 Q212 78 222 80 L222 120 Q212 122 190 124 Q168 122 158 120 Z" fill="rgba(77,168,232,0.08)" stroke="#4da8e8" stroke-width="1.5"/>
+        <line x1="170" y1="77" x2="170" y2="123" stroke="#4da8e8" stroke-width="0.8" stroke-dasharray="2,2"/>
+        <line x1="182" y1="76" x2="182" y2="124" stroke="#4da8e8" stroke-width="0.8" stroke-dasharray="2,2"/>
+        <line x1="198" y1="76" x2="198" y2="124" stroke="#4da8e8" stroke-width="0.8" stroke-dasharray="2,2"/>
+        <line x1="210" y1="77" x2="210" y2="123" stroke="#4da8e8" stroke-width="0.8" stroke-dasharray="2,2"/>
+        <rect x="212" y="90" width="140" height="20" rx="2" fill="#1e2530" stroke="#2e3a48" stroke-width="1.5"/>
+        <text x="340" y="106" font-family="DM Mono" font-size="8" fill="#4d5f75" letter-spacing="1">TO OUTER →</text>
+        <line x1="228" y1="90" x2="228" y2="110" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="244" y1="90" x2="244" y2="110" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="260" y1="90" x2="260" y2="110" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="276" y1="90" x2="276" y2="110" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="292" y1="90" x2="292" y2="110" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="308" y1="90" x2="308" y2="110" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="110" y1="85" x2="85" y2="48" stroke="#4da8e8" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-blue)"/>
+        <circle cx="79" cy="38" r="10" fill="#4da8e8"/>
+        <text x="79" y="42" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">1</text>
+        <line x1="133" y1="76" x2="133" y2="44" stroke="#4da8e8" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-blue)"/>
+        <circle cx="133" cy="34" r="10" fill="#4da8e8"/>
+        <text x="133" y="38" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">2</text>
+        <line x1="175" y1="76" x2="175" y2="44" stroke="#4da8e8" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-blue)"/>
+        <circle cx="175" cy="34" r="10" fill="#4da8e8"/>
+        <text x="175" y="38" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">3</text>
+        <line x1="190" y1="124" x2="220" y2="158" stroke="#4da8e8" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-blue)"/>
+        <circle cx="226" cy="164" r="10" fill="#4da8e8"/>
+        <text x="226" y="168" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">4</text>
+        <line x1="265" y1="90" x2="265" y2="52" stroke="#4da8e8" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-blue)"/>
+        <circle cx="265" cy="42" r="10" fill="#4da8e8"/>
+        <text x="265" y="46" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">5</text>
+      </svg>
+    </div>
+    <div class="callout-list">
+      <div class="callout-item"><div class="callout-num">1</div><div><div class="callout-name">Rack Thread Interface</div><div class="callout-desc">Threaded end screws directly into rack housing. Often uses left-hand threads on driver side for self-tightening under load.</div></div></div>
+      <div class="callout-item"><div class="callout-num">2</div><div><div class="callout-name">Hex Wrench Body</div><div class="callout-desc">Large hex section provides purchase for install/removal. Requires special crowfoot or inner tie rod socket tool.</div></div></div>
+      <div class="callout-item"><div class="callout-num">3</div><div><div class="callout-name">Rack Bellows Boot</div><div class="callout-desc">Large accordion-style rubber boot seals the inner joint and rack housing, retaining steering rack lubricant.</div></div></div>
+      <div class="callout-item"><div class="callout-num">4</div><div><div class="callout-name">Pivot Ball Joint</div><div class="callout-desc">High-load ball-and-socket pivot directly handling steering forces from the rack. Higher load rating than outer joint.</div></div></div>
+      <div class="callout-item"><div class="callout-num">5</div><div><div class="callout-name">Threaded Shaft to Outer</div><div class="callout-desc">Accepts the outer tie rod end. Thread depth sets the baseline toe before outer end fine-tunes the measurement.</div></div></div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- TORQUE SPECS -->
+<section class="section-wrap" id="torque">
+  <div class="section-head">
+    <h2>Torque Specifications</h2>
+    <span>Reference — verify with OEM service manual</span>
+  </div>
+
+  <div class="torque-grid">
+    <div class="torque-card">
+      <div class="torque-card-label">Component 01</div>
+      <div class="torque-card-name">Outer Tie Rod End</div>
+      <div class="torque-spec"><span class="torque-spec-name">Castle Nut (to knuckle)</span><span class="torque-value">35–45 ft·lb</span></div>
+      <div class="torque-spec"><span class="torque-spec-name">Jam / Lock Nut</span><span class="torque-value">40–50 ft·lb</span></div>
+      <div class="torque-spec"><span class="torque-spec-name">Cotter Pin Min Torque</span><span class="torque-value">35 ft·lb min</span></div>
+      <div class="torque-spec"><span class="torque-spec-name">Thread Engagement</span><span class="torque-value">≥ 5 full turns</span></div>
+    </div>
+
+    <div class="torque-card">
+      <div class="torque-card-label">Component 02</div>
+      <div class="torque-card-name">Inner Tie Rod End</div>
+      <div class="torque-spec"><span class="torque-spec-name">To Rack Housing</span><span class="torque-value">55–75 ft·lb</span></div>
+      <div class="torque-spec"><span class="torque-spec-name">Locking Pin / Stake</span><span class="torque-value">Stake flush</span></div>
+      <div class="torque-spec"><span class="torque-spec-name">Boot Clamps</span><span class="torque-value">Hand-tight + 1/4 turn</span></div>
+      <div class="torque-spec"><span class="torque-spec-name">Socket Drive Torque</span><span class="torque-value">70 ft·lb typical</span></div>
+    </div>
+
+    <div class="torque-card">
+      <div class="torque-card-label">Component 03</div>
+      <div class="torque-card-name">Steering Knuckle</div>
+      <div class="torque-spec"><span class="torque-spec-name">Knuckle to Strut Pinch</span><span class="torque-value">70–85 ft·lb</span></div>
+      <div class="torque-spec"><span class="torque-spec-name">Ball Joint Pinch Bolt</span><span class="torque-value">45–60 ft·lb</span></div>
+      <div class="torque-spec"><span class="torque-spec-name">Hub Bearing Nut</span><span class="torque-value">155–200 ft·lb</span></div>
+      <div class="torque-spec"><span class="torque-spec-name">ABS Sensor Bolt</span><span class="torque-value">8–12 ft·lb</span></div>
+    </div>
+
+    <div class="torque-card">
+      <div class="torque-card-label">Component 04</div>
+      <div class="torque-card-name">Rack &amp; Pinion</div>
+      <div class="torque-spec"><span class="torque-spec-name">Rack Mount Bolts</span><span class="torque-value">50–70 ft·lb</span></div>
+      <div class="torque-spec"><span class="torque-spec-name">Pinion Preload</span><span class="torque-value">7–12 in·lb</span></div>
+      <div class="torque-spec"><span class="torque-spec-name">Intermediate Shaft Bolt</span><span class="torque-value">20–25 ft·lb</span></div>
+      <div class="torque-spec"><span class="torque-spec-name">Hydraulic Line Fittings</span><span class="torque-value">12–15 ft·lb</span></div>
+    </div>
+  </div>
+
+  <div class="torque-note">
+    <span class="torque-note-icon">⚠</span>
+    <span><strong style="color:var(--accent)">Always verify specs against OEM service manual for your specific vehicle.</strong> Values shown are typical ranges for passenger vehicles. Torque specifications vary significantly by make, model, and year. Always use a calibrated torque wrench. Lubricated threads may require reduced torque values. Replace cotter pins and self-locking nuts on every installation.</span>
+  </div>
+</section>
+
+<!-- ANIMATED SUSPENSION -->
+<section class="suspension-section" id="suspension">
+  <div class="section-head">
+    <h2>Live Suspension Animation</h2>
+    <span>Interactive Steering System Visualization</span>
+  </div>
+  <div class="suspension-container">
+    <div class="suspension-controls">
+      <button class="ctrl-btn active" id="btnPlay" onclick="togglePlay()">▶ Play</button>
+      <button class="ctrl-btn" id="btnPause" onclick="togglePlay()">⏸ Pause</button>
+      <div class="ctrl-sep"></div>
+      <span class="ctrl-label">Mode:</span>
+      <button class="ctrl-btn active" id="modeBump" onclick="setMode('bump')">Bump / Travel</button>
+      <button class="ctrl-btn" id="modeTurn" onclick="setMode('turn')">Steering Turn</button>
+      <button class="ctrl-btn" id="modeCombined" onclick="setMode('combined')">Combined</button>
+      <div class="ctrl-sep"></div>
+      <button class="ctrl-btn" id="btnLabels" onclick="toggleLabels()">Labels ON</button>
+    </div>
+    <div class="anim-canvas-wrap">
+      <canvas id="suspCanvas"></canvas>
+    </div>
+    <div class="anim-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#e8a320"></div>Outer Tie Rod</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#4da8e8"></div>Inner Tie Rod</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#5ee87a"></div>Steering Knuckle</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e85e8a"></div>Rack &amp; Pinion</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#a87ae8"></div>Strut / Suspension</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e8d87a"></div>Wheel Hub</div>
+    </div>
+  </div>
+</section>
+
+<!-- RACK ASSEMBLY & STEERING KNUCKLE -->
+<div id="rack">
+<section class="section-wrap" style="border-bottom:none; padding-bottom:0;">
+  <div class="section-head">
+    <h2>Rack &amp; Knuckle Components</h2>
+    <span>Extended System Reference</span>
+  </div>
+</section>
+<section class="rack-panels">
+  <!-- STEERING KNUCKLE -->
+  <div class="rack-panel" data-index="03">
+    <div class="panel-tag">Component 03</div>
+    <div class="panel-title">Steering Knuckle</div>
+    <div class="panel-subtitle">Also known as spindle or upright</div>
+    <div class="svg-wrap">
+      <svg viewBox="0 0 440 220" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="grid3" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="0.5"/>
+          </pattern>
+          <marker id="arr-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#5ee87a"/>
+          </marker>
+        </defs>
+        <rect width="440" height="220" fill="url(#grid3)"/>
+
+        <!-- Knuckle body -->
+        <path d="M160 60 L280 60 L300 90 L310 130 L300 170 L280 190 L160 190 L140 170 L130 130 L140 90 Z" fill="#1e2d3f" stroke="#5ee87a" stroke-width="2"/>
+
+        <!-- Hub bearing bore (center) -->
+        <circle cx="220" cy="125" r="36" fill="#111820" stroke="#3d4f66" stroke-width="2"/>
+        <circle cx="220" cy="125" r="22" fill="#162030" stroke="#5ee87a" stroke-width="1.5"/>
+        <circle cx="220" cy="125" r="10" fill="#0a0c0f" stroke="#3d4f66" stroke-width="1"/>
+        <!-- Bearing balls -->
+        <circle cx="220" cy="103" r="5" fill="#2a3d55" stroke="#5ee87a" stroke-width="1"/>
+        <circle cx="238" cy="112" r="5" fill="#2a3d55" stroke="#5ee87a" stroke-width="1"/>
+        <circle cx="238" cy="138" r="5" fill="#2a3d55" stroke="#5ee87a" stroke-width="1"/>
+        <circle cx="220" cy="147" r="5" fill="#2a3d55" stroke="#5ee87a" stroke-width="1"/>
+        <circle cx="202" cy="138" r="5" fill="#2a3d55" stroke="#5ee87a" stroke-width="1"/>
+        <circle cx="202" cy="112" r="5" fill="#2a3d55" stroke="#5ee87a" stroke-width="1"/>
+
+        <!-- Strut mount (top) -->
+        <rect x="195" y="30" width="50" height="32" rx="4" fill="#243040" stroke="#a87ae8" stroke-width="2"/>
+        <circle cx="208" cy="46" r="6" fill="#162030" stroke="#a87ae8" stroke-width="1.5"/>
+        <circle cx="232" cy="46" r="6" fill="#162030" stroke="#a87ae8" stroke-width="1.5"/>
+        <text x="220" y="26" text-anchor="middle" font-family="DM Mono" font-size="8" fill="#a87ae8" letter-spacing="1">STRUT MOUNT</text>
+
+        <!-- Lower ball joint mount (bottom) -->
+        <rect x="195" y="186" width="50" height="30" rx="4" fill="#243040" stroke="#e8d87a" stroke-width="2"/>
+        <circle cx="220" cy="201" r="8" fill="#162030" stroke="#e8d87a" stroke-width="1.5"/>
+        <circle cx="220" cy="201" r="3" fill="#e8d87a"/>
+        <text x="220" y="228" text-anchor="middle" font-family="DM Mono" font-size="8" fill="#e8d87a" letter-spacing="1">LWR BALL JT</text>
+
+        <!-- Tie rod attachment point -->
+        <rect x="296" y="115" width="40" height="24" rx="4" fill="#243040" stroke="#e8a320" stroke-width="2"/>
+        <circle cx="316" cy="127" r="7" fill="#162030" stroke="#e8a320" stroke-width="1.5"/>
+        <circle cx="316" cy="127" r="3" fill="#e8a320"/>
+
+        <!-- Brake caliper mount -->
+        <rect x="100" y="108" width="34" height="38" rx="3" fill="#1a2535" stroke="#3d4f66" stroke-width="1.5"/>
+        <circle cx="110" cy="118" r="5" fill="#162030" stroke="#4da8e8" stroke-width="1"/>
+        <circle cx="110" cy="136" r="5" fill="#162030" stroke="#4da8e8" stroke-width="1"/>
+        <text x="90" y="106" font-family="DM Mono" font-size="8" fill="#4d5f75" letter-spacing="1">CALIPER</text>
+
+        <!-- Callout numbers -->
+        <line x1="220" y1="89" x2="180" y2="52" stroke="#5ee87a" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-green)"/>
+        <circle cx="174" cy="42" r="10" fill="#5ee87a"/>
+        <text x="174" y="46" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">1</text>
+
+        <line x1="310" y1="127" x2="360" y2="110" stroke="#5ee87a" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-green)"/>
+        <circle cx="366" cy="104" r="10" fill="#5ee87a"/>
+        <text x="366" y="108" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">2</text>
+
+        <line x1="220" y1="62" x2="260" y2="36" stroke="#5ee87a" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-green)"/>
+        <circle cx="266" cy="26" r="10" fill="#5ee87a"/>
+        <text x="266" y="30" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">3</text>
+
+        <line x1="220" y1="186" x2="260" y2="210" stroke="#5ee87a" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-green)"/>
+        <circle cx="266" cy="216" r="10" fill="#5ee87a"/>
+        <text x="266" y="220" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">4</text>
+
+        <line x1="130" y1="125" x2="96" y2="108" stroke="#5ee87a" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-green)"/>
+        <circle cx="90" cy="100" r="10" fill="#5ee87a"/>
+        <text x="90" y="104" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">5</text>
+      </svg>
+    </div>
+    <div class="callout-list">
+      <div class="callout-item"><div class="callout-num" style="background:var(--accent3)">1</div><div><div class="callout-name">Hub Bearing Assembly</div><div class="callout-desc">Precision double-row angular contact bearing allowing wheel rotation while transmitting vertical, lateral, and axial loads to the knuckle body.</div></div></div>
+      <div class="callout-item"><div class="callout-num" style="background:var(--accent3)">2</div><div><div class="callout-name">Outer Tie Rod Mounting Boss</div><div class="callout-desc">Tapered bore accepts the outer tie rod stud. Steering geometry converges here — this point defines the instantaneous steering axis at the wheel.</div></div></div>
+      <div class="callout-item"><div class="callout-num" style="background:var(--accent3)">3</div><div><div class="callout-name">Strut / Pinch Bolt Mount</div><div class="callout-desc">Top of knuckle clamps around the strut tube via pinch bolt. Eccentric bolt or cam adjusters often provide camber correction range.</div></div></div>
+      <div class="callout-item"><div class="callout-num" style="background:var(--accent3)">4</div><div><div class="callout-name">Lower Ball Joint Socket</div><div class="callout-desc">Accepts lower control arm ball joint. Defines the lower pivot of the steering axis (KPI — king pin inclination) in combination with top strut mount.</div></div></div>
+      <div class="callout-item"><div class="callout-num" style="background:var(--accent3)">5</div><div><div class="callout-name">Brake Caliper Mounting Ears</div><div class="callout-desc">Cast bosses with threaded bores for sliding brake caliper bracket bolts. Knuckle absorbs all braking torque reaction forces.</div></div></div>
+    </div>
+  </div>
+
+  <!-- RACK & PINION -->
+  <div class="rack-panel" data-index="04">
+    <div class="panel-tag">Component 04</div>
+    <div class="panel-title">Rack &amp; Pinion Assembly</div>
+    <div class="panel-subtitle">Hydraulic or electric power assist</div>
+    <div class="svg-wrap">
+      <svg viewBox="0 0 440 220" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="grid4" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="0.5"/>
+          </pattern>
+          <marker id="arr-pink" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#e85e8a"/>
+          </marker>
+        </defs>
+        <rect width="440" height="220" fill="url(#grid4)"/>
+
+        <!-- Main rack housing tube -->
+        <rect x="20" y="90" width="400" height="40" rx="6" fill="#1a2535" stroke="#e85e8a" stroke-width="2"/>
+
+        <!-- Rack teeth (bottom of tube) -->
+        <rect x="20" y="118" width="400" height="12" rx="0" fill="#162030"/>
+        <line x1="40" y1="118" x2="40" y2="130" stroke="#2a3f55" stroke-width="2"/>
+        <line x1="56" y1="118" x2="56" y2="130" stroke="#2a3f55" stroke-width="2"/>
+        <line x1="72" y1="118" x2="72" y2="130" stroke="#2a3f55" stroke-width="2"/>
+        <line x1="88" y1="118" x2="88" y2="130" stroke="#2a3f55" stroke-width="2"/>
+        <line x1="104" y1="118" x2="104" y2="130" stroke="#2a3f55" stroke-width="2"/>
+        <line x1="120" y1="118" x2="120" y2="130" stroke="#2a3f55" stroke-width="2"/>
+        <line x1="136" y1="118" x2="136" y2="130" stroke="#2a3f55" stroke-width="2"/>
+        <line x1="152" y1="118" x2="152" y2="130" stroke="#2a3f55" stroke-width="2"/>
+        <line x1="168" y1="118" x2="168" y2="130" stroke="#2a3f55" stroke-width="2"/>
+        <line x1="184" y1="118" x2="184" y2="130" stroke="#2a3f55" stroke-width="2"/>
+        <line x1="200" y1="118" x2="200" y2="130" stroke="#2a3f55" stroke-width="2"/>
+        <line x1="216" y1="118" x2="216" y2="130" stroke="#2a3f55" stroke-width="2"/>
+        <line x1="232" y1="118" x2="232" y2="130" stroke="#2a3f55" stroke-width="2"/>
+        <line x1="248" y1="118" x2="248" y2="130" stroke="#2a3f55" stroke-width="2"/>
+        <line x1="264" y1="118" x2="264" y2="130" stroke="#2a3f55" stroke-width="2"/>
+        <line x1="280" y1="118" x2="280" y2="130" stroke="#2a3f55" stroke-width="2"/>
+        <line x1="296" y1="118" x2="296" y2="130" stroke="#2a3f55" stroke-width="2"/>
+        <line x1="312" y1="118" x2="312" y2="130" stroke="#2a3f55" stroke-width="2"/>
+        <line x1="328" y1="118" x2="328" y2="130" stroke="#2a3f55" stroke-width="2"/>
+        <line x1="344" y1="118" x2="344" y2="130" stroke="#2a3f55" stroke-width="2"/>
+        <line x1="360" y1="118" x2="360" y2="130" stroke="#2a3f55" stroke-width="2"/>
+        <line x1="376" y1="118" x2="376" y2="130" stroke="#2a3f55" stroke-width="2"/>
+        <line x1="392" y1="118" x2="392" y2="130" stroke="#2a3f55" stroke-width="2"/>
+
+        <!-- Pinion housing (center-left) -->
+        <ellipse cx="155" cy="76" rx="28" ry="28" fill="#1e2d3f" stroke="#e85e8a" stroke-width="2"/>
+        <ellipse cx="155" cy="76" rx="16" ry="16" fill="#162030" stroke="#3d4f66" stroke-width="1.5"/>
+        <!-- Pinion gear teeth -->
+        <circle cx="155" cy="56" r="4" fill="#e85e8a" opacity="0.6"/>
+        <circle cx="170" cy="61" r="4" fill="#e85e8a" opacity="0.6"/>
+        <circle cx="175" cy="76" r="4" fill="#e85e8a" opacity="0.6"/>
+        <circle cx="170" cy="91" r="4" fill="#e85e8a" opacity="0.6"/>
+        <circle cx="155" cy="96" r="4" fill="#e85e8a" opacity="0.6"/>
+        <circle cx="140" cy="91" r="4" fill="#e85e8a" opacity="0.6"/>
+        <circle cx="135" cy="76" r="4" fill="#e85e8a" opacity="0.6"/>
+        <circle cx="140" cy="61" r="4" fill="#e85e8a" opacity="0.6"/>
+        <!-- Pinion shaft going up -->
+        <rect x="148" y="20" width="14" height="32" rx="3" fill="#243040" stroke="#e85e8a" stroke-width="1.5"/>
+        <text x="155" y="16" text-anchor="middle" font-family="DM Mono" font-size="8" fill="#e85e8a" letter-spacing="1">INPUT SHAFT</text>
+
+        <!-- EPAS motor (if electric) -->
+        <rect x="260" y="58" width="60" height="50" rx="6" fill="#1e2d3f" stroke="#4da8e8" stroke-width="1.5"/>
+        <text x="290" y="79" text-anchor="middle" font-family="DM Mono" font-size="8" fill="#4da8e8" letter-spacing="1">EPAS</text>
+        <text x="290" y="93" text-anchor="middle" font-family="DM Mono" font-size="8" fill="#4d5f75" letter-spacing="1">MOTOR</text>
+        <!-- Motor connection to rack -->
+        <rect x="285" y="105" width="10" height="16" fill="#162030" stroke="#4da8e8" stroke-width="1"/>
+
+        <!-- Bellows boots on rack ends -->
+        <!-- Left boot -->
+        <path d="M20 90 L60 90 L60 130 L20 130" fill="rgba(77,168,232,0.06)" stroke="#4da8e8" stroke-width="1.5"/>
+        <line x1="30" y1="90" x2="30" y2="130" stroke="#4da8e8" stroke-width="0.8" stroke-dasharray="2,2"/>
+        <line x1="42" y1="90" x2="42" y2="130" stroke="#4da8e8" stroke-width="0.8" stroke-dasharray="2,2"/>
+        <line x1="54" y1="90" x2="54" y2="130" stroke="#4da8e8" stroke-width="0.8" stroke-dasharray="2,2"/>
+        <!-- Right boot -->
+        <path d="M380 90 L420 90 L420 130 L380 130" fill="rgba(77,168,232,0.06)" stroke="#4da8e8" stroke-width="1.5"/>
+        <line x1="390" y1="90" x2="390" y2="130" stroke="#4da8e8" stroke-width="0.8" stroke-dasharray="2,2"/>
+        <line x1="402" y1="90" x2="402" y2="130" stroke="#4da8e8" stroke-width="0.8" stroke-dasharray="2,2"/>
+        <line x1="414" y1="90" x2="414" y2="130" stroke="#4da8e8" stroke-width="0.8" stroke-dasharray="2,2"/>
+
+        <!-- Mount brackets -->
+        <rect x="80" y="82" width="16" height="56" rx="2" fill="#243040" stroke="#3d4f66" stroke-width="1.5"/>
+        <rect x="344" y="82" width="16" height="56" rx="2" fill="#243040" stroke="#3d4f66" stroke-width="1.5"/>
+        <circle cx="88" cy="110" r="5" fill="#162030" stroke="#e85e8a" stroke-width="1"/>
+        <circle cx="352" cy="110" r="5" fill="#162030" stroke="#e85e8a" stroke-width="1"/>
+
+        <!-- Callout numbers -->
+        <line x1="155" y1="48" x2="130" y2="28" stroke="#e85e8a" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-pink)"/>
+        <circle cx="124" cy="18" r="10" fill="#e85e8a"/>
+        <text x="124" y="22" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">1</text>
+
+        <line x1="155" y1="90" x2="155" y2="155" stroke="#e85e8a" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-pink)"/>
+        <circle cx="155" cy="165" r="10" fill="#e85e8a"/>
+        <text x="155" y="169" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">2</text>
+
+        <line x1="290" y1="108" x2="310" y2="155" stroke="#e85e8a" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-pink)"/>
+        <circle cx="316" cy="165" r="10" fill="#e85e8a"/>
+        <text x="316" y="169" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">3</text>
+
+        <line x1="40" y1="90" x2="28" y2="58" stroke="#e85e8a" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-pink)"/>
+        <circle cx="22" cy="48" r="10" fill="#e85e8a"/>
+        <text x="22" y="52" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">4</text>
+
+        <line x1="88" y1="82" x2="88" y2="52" stroke="#e85e8a" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-pink)"/>
+        <circle cx="88" cy="42" r="10" fill="#e85e8a"/>
+        <text x="88" y="46" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">5</text>
+
+        <text x="220" y="108" text-anchor="middle" font-family="DM Mono" font-size="9" fill="#4d5f75" letter-spacing="2">RACK HOUSING</text>
+      </svg>
+    </div>
+    <div class="callout-list">
+      <div class="callout-item"><div class="callout-num" style="background:var(--accent4)">1</div><div><div class="callout-name">Pinion / Input Shaft</div><div class="callout-desc">Connects to steering column via universal joint. Pinion gear meshes with rack teeth to convert rotational input to linear rack travel.</div></div></div>
+      <div class="callout-item"><div class="callout-num" style="background:var(--accent4)">2</div><div><div class="callout-name">Rack Teeth &amp; Housing Bore</div><div class="callout-desc">Precision machined rack slides linearly within the housing. Rack travel per steering wheel turn is set by pinion gear ratio — typically 2.5–3 turns lock-to-lock.</div></div></div>
+      <div class="callout-item"><div class="callout-num" style="background:var(--accent4)">3</div><div><div class="callout-name">EPAS / Assist Motor</div><div class="callout-desc">Electric power assist motor (EPAS) applies torque directly to the rack or pinion. Replaces hydraulic systems on modern vehicles — no fluid, lower parasitic loss.</div></div></div>
+      <div class="callout-item"><div class="callout-num" style="background:var(--accent4)">4</div><div><div class="callout-name">Inner Tie Rod Bellows Boots</div><div class="callout-desc">Accordion rubber seals at each rack end protect the inner tie rod ball joints and retain rack lubricant. Torn boots lead to rapid inner tie rod failure.</div></div></div>
+      <div class="callout-item"><div class="callout-num" style="background:var(--accent4)">5</div><div><div class="callout-name">Rack Mount Brackets</div><div class="callout-desc">Bolted to subframe or chassis rails. Isolating bushings in brackets dampen road noise transmission into the cabin. Worn bushings allow rack movement under load.</div></div></div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- COMPARISON TABLE -->
+<section class="section-wrap">
+  <div class="section-head">
+    <h2>Full System Comparison</h2>
+    <span>All Four Components</span>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Attribute</th>
+        <th><span class="badge badge-outer">Outer Tie Rod</span></th>
+        <th><span class="badge badge-inner">Inner Tie Rod</span></th>
+        <th><span class="badge badge-knuckle">Knuckle</span></th>
+        <th><span class="badge badge-rack">Rack &amp; Pinion</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Location</td>
+        <td>Outboard, at wheel hub</td>
+        <td>Inside bellows boot at rack</td>
+        <td>Wheel corner, hub carrier</td>
+        <td>Center, mounted to subframe</td>
+      </tr>
+      <tr>
+        <td>Primary Function</td>
+        <td>Toe adjustment &amp; final steering link</td>
+        <td>Transmits rack force outboard</td>
+        <td>Carries wheel, brake, tie rod</td>
+        <td>Converts steering input to lateral motion</td>
+      </tr>
+      <tr>
+        <td>Wear Rate</td>
+        <td>Moderate — exposed joint</td>
+        <td>Lower — protected by boot</td>
+        <td>Very low (cast steel/aluminum)</td>
+        <td>Low — internal seals protect</td>
+      </tr>
+      <tr>
+        <td>Alignment Impact</td>
+        <td>Direct toe adjustment</td>
+        <td>Baseline length setting</td>
+        <td>Camber &amp; caster via strut</td>
+        <td>Steering ratio &amp; center feel</td>
+      </tr>
+      <tr>
+        <td>Service Interval</td>
+        <td>Inspect 30k, replace as needed</td>
+        <td>Inspect at every alignment</td>
+        <td>Inspect bearing every 60k</td>
+        <td>Check fluid/boots every 30k</td>
+      </tr>
+      <tr>
+        <td>Typical Lifespan</td>
+        <td>70k–120k miles</td>
+        <td>100k–150k miles</td>
+        <td>150k+ (bearing: 100–150k)</td>
+        <td>150k+ (seals: 100k+)</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- DIAGNOSTIC CHECKLIST -->
+<section class="section-wrap" id="diagnostics">
+  <div class="section-head">
+    <h2>Diagnostic Checklist</h2>
+    <span>Click items to mark complete</span>
+  </div>
+  <div class="checklist-grid">
+    <div class="checklist-group">
+      <div class="checklist-group-title">Visual Inspection</div>
+      <div class="checklist-group-sub">Lift vehicle — wheels hanging freely</div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Inspect outer tie rod dust boot — check for cracks, tears, grease leakage or collapsed boot</div>
+        <div class="check-severity sev-high">High</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Inspect both rack bellows boots — check for accordion folds intact, no grease ejection, no collapse</div>
+        <div class="check-severity sev-high">High</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Check outer tie rod castle nut cotter pin is present and properly bent — missing cotter pin is critical safety issue</div>
+        <div class="check-severity sev-critical">Critical</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Inspect lock/jam nut on outer tie rod for proper torque — attempt to move by hand, check for rotation</div>
+        <div class="check-severity sev-high">High</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Check steering knuckle for cracks, impact damage, or corrosion at hub bore, strut pinch area, and ball joint boss</div>
+        <div class="check-severity sev-critical">Critical</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Inspect rack mounting bushings — look for deterioration, cracking, or rack movement under manual force</div>
+        <div class="check-severity sev-medium">Medium</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Check tire wear pattern — feathering or inside/outside shoulder wear indicates persistent toe or camber error</div>
+        <div class="check-severity sev-medium">Medium</div>
+      </div>
+    </div>
+
+    <div class="checklist-group">
+      <div class="checklist-group-title">Physical / Shake Tests</div>
+      <div class="checklist-group-sub">Performed with vehicle on lift, engine off</div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Grasp tire at 9 &amp; 3 o'clock — shake firmly. Any horizontal clunk or movement indicates outer tie rod or rack end wear</div>
+        <div class="check-severity sev-critical">Critical</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Grasp tire at 12 &amp; 6 o'clock — shake vertically. Movement indicates wheel bearing, ball joint, or hub bearing play</div>
+        <div class="check-severity sev-critical">Critical</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">With assistant turning steering wheel ±2 inches, observe inner tie rod area for play or clunking before rack moves</div>
+        <div class="check-severity sev-high">High</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Spin each wheel by hand — check for roughness, grinding, or resistance indicating worn hub bearing</div>
+        <div class="check-severity sev-medium">Medium</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Check for lateral play at the rack ends by grasping inner tie rod shaft area and attempting to move up/down/side</div>
+        <div class="check-severity sev-high">High</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Verify wheel bearing preload — check for excessive drag or roughness when spinning wheel on strut-style suspension</div>
+        <div class="check-severity sev-low">Low</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Test steering wheel for dead zone / free play — more than 1.5 inches of free rotation before wheels respond requires investigation</div>
+        <div class="check-severity sev-high">High</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px; margin-top:32px;">
+    <div class="checklist-progress">
+      <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+      <span class="progress-label">Completed</span>
+      <span class="progress-count" id="progressCount">0 / 14</span>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+      <span class="check-severity sev-critical" style="padding:5px 10px;">Critical</span>
+      <span style="font-size:12px; color:var(--muted);">= Safety-critical, do not drive</span>
+      <span class="check-severity sev-high" style="padding:5px 10px;">High</span>
+      <span style="font-size:12px; color:var(--muted);">= Address immediately</span>
+      <span class="check-severity sev-medium" style="padding:5px 10px;">Medium</span>
+      <span style="font-size:12px; color:var(--muted);">= Schedule service</span>
+    </div>
+  </div>
+</section>
+
+<!-- FAILURE SYMPTOMS -->
+<div id="symptoms">
+<section class="section-wrap" style="padding-bottom:0; border-bottom:none;">
+  <div class="section-head">
+    <h2>Failure Symptoms</h2>
+    <span>All Four Components</span>
+  </div>
+</section>
+<div class="symptoms-grid">
+  <div class="symptom-card">
+    <h3>Outer Tie Rod</h3>
+    <div class="symptom-item"><div class="sym-dot"></div><div>Uneven tire wear — feathering or inside/outside edge wear from persistent toe error</div></div>
+    <div class="symptom-item"><div class="sym-dot"></div><div>Loose or wandering steering at highway speeds — wheel "floats" on straight sections</div></div>
+    <div class="symptom-item"><div class="sym-dot"></div><div>Clunking or popping from front end during turns or low-speed bump impacts</div></div>
+    <div class="symptom-item"><div class="sym-dot"></div><div>Visible horizontal play when shaking tire in 9 &amp; 3 o'clock position</div></div>
+    <div class="symptom-item"><div class="sym-dot"></div><div>Vehicle pulls to one side under braking — asymmetric toe geometry</div></div>
+  </div>
+  <div class="symptom-card">
+    <h3>Inner Tie Rod</h3>
+    <div class="symptom-item"><div class="sym-dot"></div><div>Excessive steering dead zone — large rotation before road wheels respond</div></div>
+    <div class="symptom-item"><div class="sym-dot"></div><div>Rack bellows boot collapsed, torn, or filled with steering rack grease</div></div>
+    <div class="symptom-item"><div class="sym-dot"></div><div>Vibration or shimmy through steering wheel over rough pavement</div></div>
+    <div class="symptom-item"><div class="sym-dot"></div><div>Clunking felt through steering wheel during turns — transmits through rack</div></div>
+    <div class="symptom-item"><div class="sym-dot"></div><div>Rapid repeated outer tie rod wear after fresh alignments — inner failure masking root cause</div></div>
+  </div>
+  <div class="symptom-card">
+    <h3>Steering Knuckle</h3>
+    <div class="symptom-item"><div class="sym-dot"></div><div>Grinding, rumbling or humming noise from wheel area — progressive wheel bearing failure</div></div>
+    <div class="symptom-item"><div class="sym-dot"></div><div>ABS light illuminated — bearing-integrated ABS sensor signal loss</div></div>
+    <div class="symptom-item"><div class="sym-dot"></div><div>Visible corrosion, cracking, or deformation at strut pinch bolt area after impact damage</div></div>
+    <div class="symptom-item"><div class="sym-dot"></div><div>Lateral wheel wobble at speed — severely worn hub bearing or damaged knuckle bore</div></div>
+    <div class="symptom-item"><div class="sym-dot"></div><div>Camber or caster won't align within spec after collision — bent knuckle casting</div></div>
+  </div>
+  <div class="symptom-card">
+    <h3>Rack &amp; Pinion</h3>
+    <div class="symptom-item"><div class="sym-dot"></div><div>Hydraulic fluid leak from boot area or hose fittings — power steering fluid on ground</div></div>
+    <div class="symptom-item"><div class="sym-dot"></div><div>Stiff or hard steering on one lock — internal rack wear causing tight spot</div></div>
+    <div class="symptom-item"><div class="sym-dot"></div><div>Whining or groaning from power steering pump — low fluid from rack leak</div></div>
+    <div class="symptom-item"><div class="sym-dot"></div><div>On-center free play — worn pinion preload adjuster, rack yoke, or pinion bearings</div></div>
+    <div class="symptom-item"><div class="sym-dot"></div><div>EPAS warning light or reduced assist — motor, torque sensor, or control module fault</div></div>
+  </div>
+</div>
+</div>
+
+<footer>
+  <div>© 2026 Alignment Tech</div>
+  <div>Steering System — Complete Reference</div>
+  <div>v2.0 — Full Assembly Guide</div>
+</footer>
+
+<script>
+// ===== CHECKLIST =====
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  updateProgress();
+}
+function updateProgress() {
+  const all = document.querySelectorAll('.check-item');
+  const done = document.querySelectorAll('.check-item.checked');
+  const pct = (done.length / all.length) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressCount').textContent = done.length + ' / ' + all.length;
+}
+
+// ===== SUSPENSION ANIMATION =====
+const canvas = document.getElementById('suspCanvas');
+const ctx = canvas.getContext('2d');
+let animRunning = true;
+let animMode = 'bump';
+let showLabels = true;
+let t = 0;
+
+function resize() {
+  const wrap = canvas.parentElement;
+  canvas.width = wrap.clientWidth * window.devicePixelRatio;
+  canvas.height = 420 * window.devicePixelRatio;
+  canvas.style.width = wrap.clientWidth + 'px';
+  canvas.style.height = '420px';
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+}
+resize();
+window.addEventListener('resize', resize);
+
+function togglePlay() {
+  animRunning = !animRunning;
+  document.getElementById('btnPlay').classList.toggle('active', animRunning);
+  document.getElementById('btnPause').classList.toggle('active', !animRunning);
+  if (animRunning) requestAnimationFrame(draw);
+}
+
+function setMode(m) {
+  animMode = m;
+  document.getElementById('modeBump').classList.toggle('active', m === 'bump');
+  document.getElementById('modeTurn').classList.toggle('active', m === 'turn');
+  document.getElementById('modeCombined').classList.toggle('active', m === 'combined');
+}
+
+function toggleLabels() {
+  showLabels = !showLabels;
+  document.getElementById('btnLabels').textContent = showLabels ? 'Labels ON' : 'Labels OFF';
+}
+
+const W = () => parseInt(canvas.style.width);
+const H = () => parseInt(canvas.style.height);
+
+function draw() {
+  const w = W(), h = H();
+  ctx.clearRect(0, 0, w, h);
+
+  // Background grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+  ctx.lineWidth = 0.5;
+  for(let x = 0; x < w; x += 30) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+  for(let y = 0; y < h; y += 30) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+
+  // Calculate animations
+  let bumpOffset = 0, steerAngle = 0;
+  if(animMode === 'bump') {
+    bumpOffset = Math.sin(t * 0.04) * 40;
+  } else if(animMode === 'turn') {
+    steerAngle = Math.sin(t * 0.03) * 0.28;
+  } else {
+    bumpOffset = Math.sin(t * 0.04) * 25;
+    steerAngle = Math.sin(t * 0.025 + 0.5) * 0.22;
+  }
+
+  const cx = w / 2;
+  const baseY = h * 0.58;
+  const rackY = baseY + 10;
+
+  // === RACK HOUSING ===
+  const rackX1 = cx - 200, rackX2 = cx + 200;
+  const rackLeft = cx - 60 + steerAngle * 120;
+
+  drawRect(ctx, rackX1, rackY - 16, rackX2 - rackX1, 32, '#e85e8a', 'rgba(26,37,53,0.9)', 6);
+  if(showLabels) label(ctx, cx, rackY, 'RACK & PINION', '#e85e8a');
+
+  // Rack teeth indicator
+  ctx.fillStyle = 'rgba(232,94,138,0.15)';
+  ctx.fillRect(rackX1, rackY + 4, rackX2 - rackX1, 12);
+
+  // === LEFT SIDE ===
+  const lInnerX = rackX1 + 30;
+  const lInnerY = rackY;
+  const lOuterX = rackX1 - 60 + steerAngle * 60;
+  const lOuterY = rackY - bumpOffset * 0.4;
+  const lKnuckleX = rackX1 - 110 + steerAngle * 80;
+  const lKnuckleY = rackY - bumpOffset;
+  const lWheelX = rackX1 - 130 + steerAngle * 90;
+  const lWheelY = rackY - bumpOffset;
+  const lStrutTopX = rackX1 - 95 + steerAngle * 20;
+  const lStrutTopY = rackY - bumpOffset - 100;
+
+  drawSteering(ctx, lInnerX, lInnerY, lOuterX, lOuterY, lKnuckleX, lKnuckleY, lWheelX, lWheelY, lStrutTopX, lStrutTopY, 'left', showLabels, steerAngle, bumpOffset);
+
+  // === RIGHT SIDE ===
+  const rInnerX = rackX2 - 30;
+  const rInnerY = rackY;
+  const rOuterX = rackX2 + 60 - steerAngle * 60;
+  const rOuterY = rackY - bumpOffset * 0.35;
+  const rKnuckleX = rackX2 + 110 - steerAngle * 80;
+  const rKnuckleY = rackY - bumpOffset;
+  const rWheelX = rackX2 + 130 - steerAngle * 90;
+  const rWheelY = rackY - bumpOffset;
+  const rStrutTopX = rackX2 + 95 - steerAngle * 20;
+  const rStrutTopY = rackY - bumpOffset - 100;
+
+  drawSteering(ctx, rInnerX, rInnerY, rOuterX, rOuterY, rKnuckleX, rKnuckleY, rWheelX, rWheelY, rStrutTopX, rStrutTopY, 'right', showLabels, steerAngle, bumpOffset);
+
+  // === PINION ===
+  drawCircle(ctx, cx, rackY - 40, 18, '#e85e8a', 'rgba(22,32,48,0.9)');
+  ctx.strokeStyle = '#e85e8a';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(cx, rackY - 58); ctx.lineTo(cx, rackY - 24); ctx.stroke();
+  if(showLabels) label(ctx, cx, rackY - 70, 'PINION', '#e85e8a');
+
+  // Ground line
+  const groundY = h - 30;
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath(); ctx.moveTo(40, groundY); ctx.lineTo(w - 40, groundY); ctx.stroke();
+  ctx.setLineDash([]);
+
+  if(animRunning) {
+    t++;
+    requestAnimationFrame(draw);
+  }
+}
+
+function drawSteering(ctx, innerX, innerY, outerX, outerY, knuckleX, knuckleY, wheelX, wheelY, strutTopX, strutTopY, side, showLabels, steerAngle, bumpOffset) {
+  const isLeft = side === 'left';
+
+  // Strut / suspension arm
+  ctx.strokeStyle = '#a87ae8';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(strutTopX, strutTopY);
+  ctx.lineTo(knuckleX, knuckleY - 20);
+  ctx.stroke();
+
+  // Strut top mount dot
+  drawCircle(ctx, strutTopX, strutTopY, 7, '#a87ae8', 'rgba(22,32,48,0.9)');
+
+  // Lower control arm (simplified)
+  const lowerArmX = isLeft ? strutTopX + 30 : strutTopX - 30;
+  ctx.strokeStyle = '#a87ae8';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([3,3]);
+  ctx.beginPath();
+  ctx.moveTo(lowerArmX, strutTopY + 80);
+  ctx.lineTo(knuckleX, knuckleY + 30);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Inner tie rod
+  ctx.strokeStyle = '#4da8e8';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(innerX, innerY);
+  ctx.lineTo(outerX, outerY);
+  ctx.stroke();
+  drawCircle(ctx, innerX, innerY, 6, '#4da8e8', '#162030');
+  drawCircle(ctx, outerX, outerY, 6, '#4da8e8', '#162030');
+
+  // Outer tie rod
+  ctx.strokeStyle = '#e8a320';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(outerX, outerY);
+  ctx.lineTo(knuckleX - (isLeft ? -12 : 12), knuckleY);
+  ctx.stroke();
+  drawCircle(ctx, knuckleX - (isLeft ? -12 : 12), knuckleY, 6, '#e8a320', '#162030');
+
+  // Steering knuckle body
+  ctx.fillStyle = 'rgba(30,45,63,0.9)';
+  ctx.strokeStyle = '#5ee87a';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(knuckleX - 18, knuckleY - 30, 36, 60, 5);
+  ctx.fill();
+  ctx.stroke();
+  drawCircle(ctx, knuckleX, knuckleY, 14, '#5ee87a', '#111820');
+  drawCircle(ctx, knuckleX, knuckleY, 7, '#5ee87a', '#0a0c0f');
+
+  // Wheel (tire profile)
+  ctx.strokeStyle = '#e8d87a';
+  ctx.lineWidth = 3;
+  ctx.fillStyle = 'rgba(18,24,32,0.8)';
+  ctx.beginPath();
+  ctx.ellipse(wheelX, wheelY, 28, 44, steerAngle * (isLeft ? 1 : -1), 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  // Wheel rim spokes
+  ctx.strokeStyle = 'rgba(232,216,122,0.4)';
+  ctx.lineWidth = 1.5;
+  for(let i = 0; i < 5; i++) {
+    const angle = (i / 5) * Math.PI * 2 + steerAngle * (isLeft ? 1 : -1);
+    ctx.beginPath();
+    ctx.moveTo(wheelX, wheelY);
+    ctx.lineTo(wheelX + Math.cos(angle) * 22, wheelY + Math.sin(angle) * 34);
+    ctx.stroke();
+  }
+
+  if(showLabels) {
+    const lx = isLeft ? innerX - 30 : innerX + 30;
+    label(ctx, innerX, innerY + 22, 'INNER', '#4da8e8');
+    const midX = (outerX + knuckleX) / 2;
+    const midY = (outerY + knuckleY) / 2;
+    label(ctx, midX, midY + 22, 'OUTER', '#e8a320');
+    label(ctx, knuckleX, knuckleY - 50, 'KNUCKLE', '#5ee87a');
+  }
+}
+
+function drawRect(ctx, x, y, w, h, stroke, fill, r) {
+  ctx.fillStyle = fill;
+  ctx.strokeStyle = stroke;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, r || 0);
+  ctx.fill();
+  ctx.stroke();
+}
+
+function drawCircle(ctx, x, y, r, stroke, fill) {
+  ctx.fillStyle = fill;
+  ctx.strokeStyle = stroke;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+}
+
+function label(ctx, x, y, text, color) {
+  ctx.font = '500 10px "DM Mono"';
+  ctx.fillStyle = color;
+  ctx.textAlign = 'center';
+  ctx.fillText(text, x, y);
+}
+
+requestAnimationFrame(draw);
+</script>
+</body>
+</html>
