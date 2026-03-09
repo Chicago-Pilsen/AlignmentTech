@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tie Rod Components — Alignment Tech</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c0f;
+    --surface: #111417;
+    --panel: #161a1f;
+    --border: #252b33;
+    --accent: #e8a320;
+    --accent2: #4da8e8;
+    --text: #d4dbe6;
+    --muted: #6b7a8d;
+    --highlight: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Header */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: rgba(10,12,15,0.95);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: var(--accent);
+  }
+
+  .logo span { color: var(--text); }
+
+  nav {
+    display: flex;
+    gap: 32px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  nav a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  nav a:hover { color: var(--accent); }
+
+  /* Hero */
+  .hero {
+    padding: 80px 48px 48px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(232,163,32,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 8vw, 96px);
+    line-height: 0.92;
+    letter-spacing: 2px;
+    color: var(--highlight);
+    margin-bottom: 24px;
+  }
+
+  .hero h1 em {
+    color: var(--accent);
+    font-style: normal;
+  }
+
+  .hero-desc {
+    max-width: 560px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  /* Main Diagram Section */
+  .diagram-section {
+    padding: 64px 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .diagram-panel {
+    background: var(--surface);
+    padding: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .diagram-panel::before {
+    content: attr(data-index);
+    position: absolute;
+    top: 24px; right: 32px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 96px;
+    color: rgba(255,255,255,0.03);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .panel-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--accent);
+    padding: 4px 12px;
+    margin-bottom: 28px;
+  }
+
+  .diagram-panel:nth-child(2) .panel-tag {
+    background: var(--accent2);
+  }
+
+  .panel-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    letter-spacing: 1px;
+    color: var(--highlight);
+    margin-bottom: 8px;
+  }
+
+  .panel-subtitle {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-bottom: 40px;
+  }
+
+  /* SVG Diagram */
+  .svg-wrap {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 32px 24px;
+    margin-bottom: 40px;
+    position: relative;
+  }
+
+  svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Callout labels */
+  .callout-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .callout-item {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 14px;
+    align-items: start;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .callout-item:last-child { border-bottom: none; }
+
+  .callout-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--bg);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .diagram-panel:nth-child(2) .callout-num {
+    background: var(--accent2);
+  }
+
+  .callout-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--highlight);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .callout-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+    font-weight: 300;
+  }
+
+  /* Comparison table */
+  .compare-section {
+    padding: 64px 48px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+
+  .section-head h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    letter-spacing: 1px;
+    color: var(--highlight);
+  }
+
+  .section-head span {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead tr {
+    border-bottom: 2px solid var(--border);
+  }
+
+  thead th {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 0 16px;
+    text-align: left;
+    font-weight: 400;
+  }
+
+  thead th:first-child { color: var(--text); }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  tbody tr:hover { background: var(--surface); }
+
+  tbody td {
+    padding: 16px 0;
+    color: var(--text);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  tbody td:first-child {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    width: 180px;
+  }
+
+  .badge {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+
+  .badge-outer { background: rgba(232,163,32,0.15); color: var(--accent); }
+  .badge-inner { background: rgba(77,168,232,0.15); color: var(--accent2); }
+
+  /* Failure modes */
+  .symptoms-section {
+    padding: 64px 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+  }
+
+  .symptom-card {
+    padding: 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--accent);
+  }
+
+  .symptoms-section .symptom-card:nth-child(2) {
+    border-top-color: var(--accent2);
+  }
+
+  .symptom-card h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 1px;
+    color: var(--highlight);
+    margin-bottom: 20px;
+  }
+
+  .symptom-item {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+    align-items: flex-start;
+  }
+
+  .symptom-item:last-child { border-bottom: none; }
+
+  .sym-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+
+  .symptom-card:nth-child(2) .sym-dot { background: var(--accent2); }
+
+  /* Footer */
+  footer {
+    padding: 32px 48px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero, .diagram-panel, .compare-section, .symptom-card {
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .diagram-panel:nth-child(2) { animation-delay: 0.1s; }
+  .symptom-card:nth-child(2) { animation-delay: 0.1s; }
+
+  /* Tooltip dot in SVG */
+  .dot-label {
+    cursor: default;
+  }
+
+  @media (max-width: 900px) {
+    header { padding: 16px 24px; }
+    .hero, .compare-section { padding: 48px 24px; }
+    .diagram-section { grid-template-columns: 1fr; }
+    .symptoms-section { grid-template-columns: 1fr; padding: 48px 24px; }
+    .diagram-panel { padding: 32px 24px; }
+    nav { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Alignment<span>Tech</span></div>
+  <nav>
+    <a href="#">Components</a>
+    <a href="#">Steering</a>
+    <a href="#">Diagnostics</a>
+    <a href="#">Specs</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-label">Steering System / Component Guide</div>
+  <h1>Inner &amp; Outer<br><em>Tie Rods</em></h1>
+  <p class="hero-desc">Critical steering linkage components that connect the rack-and-pinion to the wheel hub. Understanding the differences between inner and outer tie rods is essential for proper alignment, handling, and safety diagnostics.</p>
+</section>
+
+<!-- Diagram Panels -->
+<section class="diagram-section">
+
+  <!-- OUTER TIE ROD -->
+  <div class="diagram-panel" data-index="01">
+    <div class="panel-tag">Component 01</div>
+    <div class="panel-title">Outer Tie Rod</div>
+    <div class="panel-subtitle">Also known as tie rod end</div>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Background grid -->
+        <defs>
+          <pattern id="grid1" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="0.5"/>
+          </pattern>
+          <marker id="arr-amber" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#e8a320"/>
+          </marker>
+        </defs>
+        <rect width="440" height="200" fill="url(#grid1)"/>
+
+        <!-- Main shaft (threaded rod body) -->
+        <rect x="60" y="88" width="180" height="24" rx="3" fill="#1e2530" stroke="#2e3a48" stroke-width="1.5"/>
+        <!-- Thread lines on shaft -->
+        <line x1="80" y1="88" x2="80" y2="112" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="96" y1="88" x2="96" y2="112" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="112" y1="88" x2="112" y2="112" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="128" y1="88" x2="128" y2="112" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="144" y1="88" x2="144" y2="112" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="160" y1="88" x2="160" y2="112" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="176" y1="88" x2="176" y2="112" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="192" y1="88" x2="192" y2="112" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="208" y1="88" x2="208" y2="112" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="224" y1="88" x2="224" y2="112" stroke="#2e3a48" stroke-width="1"/>
+
+        <!-- Lock nut (hex shape) -->
+        <rect x="56" y="84" width="24" height="32" rx="2" fill="#2a3342" stroke="#3d4f66" stroke-width="1.5"/>
+        <!-- Hex indicator lines -->
+        <line x1="56" y1="96" x2="80" y2="96" stroke="#3d4f66" stroke-width="1"/>
+        <line x1="56" y1="104" x2="80" y2="104" stroke="#3d4f66" stroke-width="1"/>
+
+        <!-- Inner connecting socket (left side) -->
+        <rect x="20" y="80" width="42" height="40" rx="4" fill="#243040" stroke="#3d4f66" stroke-width="1.5"/>
+        <circle cx="41" cy="100" r="10" fill="#1a2535" stroke="#e8a320" stroke-width="1.5"/>
+        <circle cx="41" cy="100" r="4" fill="#e8a320" opacity="0.8"/>
+
+        <!-- Ball joint housing (right side) -->
+        <ellipse cx="270" cy="100" rx="30" ry="22" fill="#243040" stroke="#3d4f66" stroke-width="1.5"/>
+        <ellipse cx="270" cy="100" rx="14" ry="14" fill="#1a2535" stroke="#e8a320" stroke-width="1.5"/>
+        <!-- Ball joint ball -->
+        <circle cx="270" cy="100" r="7" fill="#e8a320" opacity="0.9"/>
+
+        <!-- Stud (ball joint pin going down) -->
+        <rect x="264" y="112" width="12" height="32" rx="3" fill="#2a3342" stroke="#3d4f66" stroke-width="1.5"/>
+        <!-- Cotter pin hole -->
+        <circle cx="270" cy="138" r="3" fill="#0a0c0f" stroke="#3d4f66"/>
+
+        <!-- Dust boot -->
+        <path d="M242 118 Q270 128 298 118" fill="none" stroke="#4da8e8" stroke-width="2" stroke-dasharray="3,2"/>
+        <path d="M242 118 L242 112 Q270 122 298 112 L298 118" fill="rgba(77,168,232,0.12)" stroke="#4da8e8" stroke-width="1"/>
+
+        <!-- Callout lines & numbers -->
+        <!-- 1: Threaded shaft -->
+        <line x1="150" y1="88" x2="150" y2="56" stroke="#e8a320" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-amber)"/>
+        <circle cx="150" cy="42" r="10" fill="#e8a320"/>
+        <text x="150" y="46" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">1</text>
+
+        <!-- 2: Lock nut -->
+        <line x1="68" y1="84" x2="52" y2="58" stroke="#e8a320" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-amber)"/>
+        <circle cx="46" cy="46" r="10" fill="#e8a320"/>
+        <text x="46" y="50" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">2</text>
+
+        <!-- 3: Ball joint -->
+        <line x1="270" y1="86" x2="310" y2="56" stroke="#e8a320" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-amber)"/>
+        <circle cx="316" cy="46" r="10" fill="#e8a320"/>
+        <text x="316" y="50" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">3</text>
+
+        <!-- 4: Dust boot -->
+        <line x1="270" y1="125" x2="340" y2="155" stroke="#e8a320" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-amber)"/>
+        <circle cx="346" cy="161" r="10" fill="#e8a320"/>
+        <text x="346" y="165" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">4</text>
+
+        <!-- 5: Stud -->
+        <line x1="276" y1="140" x2="310" y2="165" stroke="#e8a320" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-amber)"/>
+        <circle cx="316" cy="171" r="10" fill="#e8a320"/>
+        <text x="316" y="175" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">5</text>
+
+        <!-- Direction labels -->
+        <text x="30" y="168" font-family="DM Mono" font-size="9" fill="#6b7a8d" letter-spacing="1">← TO RACK</text>
+        <text x="338" y="168" font-family="DM Mono" font-size="9" fill="#6b7a8d" letter-spacing="1" text-anchor="end">TO KNUCKLE →</text>
+      </svg>
+    </div>
+
+    <div class="callout-list">
+      <div class="callout-item">
+        <div class="callout-num">1</div>
+        <div>
+          <div class="callout-name">Threaded Shaft</div>
+          <div class="callout-desc">Adjustable threaded rod that screws into the lock nut. Thread engagement controls toe adjustment — turning changes alignment angle.</div>
+        </div>
+      </div>
+      <div class="callout-item">
+        <div class="callout-num">2</div>
+        <div>
+          <div class="callout-name">Lock / Jam Nut</div>
+          <div class="callout-desc">Hex nut that locks the outer tie rod at the correct thread depth after alignment is set. Must be retorqued after any adjustment.</div>
+        </div>
+      </div>
+      <div class="callout-item">
+        <div class="callout-num">3</div>
+        <div>
+          <div class="callout-name">Ball Joint Housing</div>
+          <div class="callout-desc">Articulating ball-and-socket assembly allowing multi-axis movement. Accepts suspension travel and steering input simultaneously.</div>
+        </div>
+      </div>
+      <div class="callout-item">
+        <div class="callout-num">4</div>
+        <div>
+          <div class="callout-name">Dust Boot / Grease Boot</div>
+          <div class="callout-desc">Rubber bellows seal protecting the ball joint from contamination. Cracked or torn boots accelerate joint failure significantly.</div>
+        </div>
+      </div>
+      <div class="callout-item">
+        <div class="callout-num">5</div>
+        <div>
+          <div class="callout-name">Tapered Stud &amp; Cotter Pin</div>
+          <div class="callout-desc">Morse-taper pin seats into the steering knuckle. Cotter pin prevents castle nut from backing off under vibration loads.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INNER TIE ROD -->
+  <div class="diagram-panel" data-index="02">
+    <div class="panel-tag">Component 02</div>
+    <div class="panel-title">Inner Tie Rod</div>
+    <div class="panel-subtitle">Also known as rack end or inner tie rod end</div>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="grid2" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="0.5"/>
+          </pattern>
+          <marker id="arr-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#4da8e8"/>
+          </marker>
+        </defs>
+        <rect width="440" height="200" fill="url(#grid2)"/>
+
+        <!-- Rack tube (going left) -->
+        <rect x="10" y="85" width="100" height="30" rx="2" fill="#1a2535" stroke="#2e3a48" stroke-width="1.5"/>
+        <!-- Rack teeth representation -->
+        <rect x="10" y="85" width="100" height="12" rx="2" fill="#1e2d3f"/>
+        <line x1="25" y1="85" x2="25" y2="97" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="40" y1="85" x2="40" y2="97" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="55" y1="85" x2="55" y2="97" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="70" y1="85" x2="70" y2="97" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="85" y1="85" x2="85" y2="97" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="100" y1="85" x2="100" y2="97" stroke="#2e3a48" stroke-width="1"/>
+        <!-- RACK text -->
+        <text x="55" y="109" font-family="DM Mono" font-size="8" fill="#4d5f75" text-anchor="middle" letter-spacing="2">RACK</text>
+
+        <!-- Inner tie rod body (large hex / socket head) -->
+        <rect x="108" y="76" width="50" height="48" rx="4" fill="#243040" stroke="#4da8e8" stroke-width="2"/>
+        <!-- Hex flats indicator -->
+        <line x1="108" y1="88" x2="158" y2="88" stroke="#3d4f66" stroke-width="1"/>
+        <line x1="108" y1="100" x2="158" y2="100" stroke="#3d4f66" stroke-width="1"/>
+        <line x1="108" y1="112" x2="158" y2="112" stroke="#3d4f66" stroke-width="1"/>
+
+        <!-- Socket / threaded end going into rack -->
+        <rect x="95" y="88" width="16" height="24" rx="2" fill="#1e2d3f" stroke="#3d4f66" stroke-width="1"/>
+
+        <!-- Ball socket housing (right side of inner rod body) -->
+        <circle cx="190" cy="100" r="24" fill="#1e2d3f" stroke="#4da8e8" stroke-width="2"/>
+        <circle cx="190" cy="100" r="14" fill="#162030" stroke="#3d4f66" stroke-width="1"/>
+
+        <!-- Inner ball joint pivot -->
+        <circle cx="190" cy="100" r="8" fill="#4da8e8" opacity="0.85"/>
+        <!-- Cross lines on ball joint -->
+        <line x1="182" y1="100" x2="198" y2="100" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+        <line x1="190" y1="92" x2="190" y2="108" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+
+        <!-- Bellows boot (large accordion style) -->
+        <path d="M158 80 Q168 78 190 76 Q212 78 222 80 L222 120 Q212 122 190 124 Q168 122 158 120 Z" fill="rgba(77,168,232,0.08)" stroke="#4da8e8" stroke-width="1.5"/>
+        <!-- Bellows folds -->
+        <line x1="170" y1="77" x2="170" y2="123" stroke="#4da8e8" stroke-width="0.8" stroke-dasharray="2,2"/>
+        <line x1="182" y1="76" x2="182" y2="124" stroke="#4da8e8" stroke-width="0.8" stroke-dasharray="2,2"/>
+        <line x1="198" y1="76" x2="198" y2="124" stroke="#4da8e8" stroke-width="0.8" stroke-dasharray="2,2"/>
+        <line x1="210" y1="77" x2="210" y2="123" stroke="#4da8e8" stroke-width="0.8" stroke-dasharray="2,2"/>
+
+        <!-- Connecting shaft to outer tie rod -->
+        <rect x="212" y="90" width="140" height="20" rx="2" fill="#1e2530" stroke="#2e3a48" stroke-width="1.5"/>
+        <text x="340" y="106" font-family="DM Mono" font-size="8" fill="#4d5f75" letter-spacing="1">TO OUTER →</text>
+        <!-- Thread marks -->
+        <line x1="228" y1="90" x2="228" y2="110" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="244" y1="90" x2="244" y2="110" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="260" y1="90" x2="260" y2="110" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="276" y1="90" x2="276" y2="110" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="292" y1="90" x2="292" y2="110" stroke="#2e3a48" stroke-width="1"/>
+        <line x1="308" y1="90" x2="308" y2="110" stroke="#2e3a48" stroke-width="1"/>
+
+        <!-- Callout arrows (blue) -->
+        <!-- 1: Rack thread end -->
+        <line x1="110" y1="85" x2="85" y2="52" stroke="#4da8e8" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-blue)"/>
+        <circle cx="79" cy="42" r="10" fill="#4da8e8"/>
+        <text x="79" y="46" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">1</text>
+
+        <!-- 2: Hex body -->
+        <line x1="133" y1="76" x2="133" y2="48" stroke="#4da8e8" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-blue)"/>
+        <circle cx="133" cy="38" r="10" fill="#4da8e8"/>
+        <text x="133" y="42" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">2</text>
+
+        <!-- 3: Rack boots -->
+        <line x1="175" y1="76" x2="175" y2="48" stroke="#4da8e8" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-blue)"/>
+        <circle cx="175" cy="38" r="10" fill="#4da8e8"/>
+        <text x="175" y="42" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">3</text>
+
+        <!-- 4: Ball pivot -->
+        <line x1="190" y1="124" x2="220" y2="158" stroke="#4da8e8" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-blue)"/>
+        <circle cx="226" cy="164" r="10" fill="#4da8e8"/>
+        <text x="226" y="168" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">4</text>
+
+        <!-- 5: Shaft to outer -->
+        <line x1="265" y1="90" x2="265" y2="56" stroke="#4da8e8" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr-blue)"/>
+        <circle cx="265" cy="46" r="10" fill="#4da8e8"/>
+        <text x="265" y="50" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0a0c0f" font-weight="500">5</text>
+      </svg>
+    </div>
+
+    <div class="callout-list">
+      <div class="callout-item">
+        <div class="callout-num">1</div>
+        <div>
+          <div class="callout-name">Rack Thread Interface</div>
+          <div class="callout-desc">Threaded end that screws directly into the rack housing. Typically uses left-hand threads on driver side for self-tightening under load.</div>
+        </div>
+      </div>
+      <div class="callout-item">
+        <div class="callout-num">2</div>
+        <div>
+          <div class="callout-name">Hex Wrench Body</div>
+          <div class="callout-desc">Large hex flat section provides purchase for installation and removal. Requires a special crowfoot or inner tie rod socket — not a standard wrench.</div>
+        </div>
+      </div>
+      <div class="callout-item">
+        <div class="callout-num">3</div>
+        <div>
+          <div class="callout-name">Rack Bellows Boot</div>
+          <div class="callout-desc">Large accordion-style rubber boot covers the inner joint and rack housing. Retains steering rack lubricant and excludes road contamination.</div>
+        </div>
+      </div>
+      <div class="callout-item">
+        <div class="callout-num">4</div>
+        <div>
+          <div class="callout-name">Pivot Ball Joint</div>
+          <div class="callout-desc">High-load ball-and-socket pivot that handles the primary steering forces directly from the rack. Higher load rating than outer tie rod joint.</div>
+        </div>
+      </div>
+      <div class="callout-item">
+        <div class="callout-num">5</div>
+        <div>
+          <div class="callout-name">Threaded Shaft to Outer</div>
+          <div class="callout-desc">External thread accepts the outer tie rod end. Thread-in depth sets the baseline toe measurement before fine adjustment at the outer end.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Comparison Table -->
+<section class="compare-section">
+  <div class="section-head">
+    <h2>Side-by-Side Comparison</h2>
+    <span>Technical Reference</span>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Attribute</th>
+        <th><span class="badge badge-outer">Outer Tie Rod</span></th>
+        <th><span class="badge badge-inner">Inner Tie Rod</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Location</td>
+        <td>Between outer tie rod end and steering knuckle, at wheel hub</td>
+        <td>Between rack housing and outer tie rod, inside bellows boot</td>
+      </tr>
+      <tr>
+        <td>Joint Type</td>
+        <td>Ball joint with tapered stud (external)</td>
+        <td>Ball joint or swivel socket (internal to rack)</td>
+      </tr>
+      <tr>
+        <td>Adjustment Role</td>
+        <td>Primary toe adjustment — thread in/out to set final toe angle</td>
+        <td>Coarse adjustment — sets baseline length before outer fine-tunes</td>
+      </tr>
+      <tr>
+        <td>Load Characteristics</td>
+        <td>Moderate lateral &amp; vertical loads; also handles bump steer forces</td>
+        <td>Higher loads — direct transmission of rack thrust forces</td>
+      </tr>
+      <tr>
+        <td>Wear Indicator</td>
+        <td>Vertical play in ball joint; loose stud; torn dust boot</td>
+        <td>Lateral play felt at wheel; clunking over bumps; torn bellows</td>
+      </tr>
+      <tr>
+        <td>Replacement Difficulty</td>
+        <td>Moderate — requires ball joint separator and alignment after</td>
+        <td>Harder — requires rack boot removal and special socket tool</td>
+      </tr>
+      <tr>
+        <td>Alignment Impact</td>
+        <td>Direct — adjusting thread length directly changes toe</td>
+        <td>Indirect — length change requires corresponding outer re-adjustment</td>
+      </tr>
+      <tr>
+        <td>Typical Service Life</td>
+        <td>70,000–120,000 miles depending on road conditions</td>
+        <td>100,000–150,000 miles (protected by bellows boot)</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- Symptom Cards -->
+<section class="symptoms-section">
+  <div class="symptom-card">
+    <h3>Outer Tie Rod — Failure Symptoms</h3>
+    <div class="symptom-item">
+      <div class="sym-dot"></div>
+      <div>Uneven tire wear, typically feathering or inside/outside edge wear indicating persistent toe error</div>
+    </div>
+    <div class="symptom-item">
+      <div class="sym-dot"></div>
+      <div>Loose or wandering steering, particularly at highway speeds — steering "floats" on straight sections</div>
+    </div>
+    <div class="symptom-item">
+      <div class="sym-dot"></div>
+      <div>Clunking or popping noise from front end during turns or when hitting bumps at low speed</div>
+    </div>
+    <div class="symptom-item">
+      <div class="sym-dot"></div>
+      <div>Visible play when shaking tire in the 9 o'clock and 3 o'clock positions (horizontal shake test)</div>
+    </div>
+    <div class="symptom-item">
+      <div class="sym-dot"></div>
+      <div>Cracked, torn, or grease-stained dust boot at the outboard joint end</div>
+    </div>
+    <div class="symptom-item">
+      <div class="sym-dot"></div>
+      <div>Vehicle pulls to one side under braking due to asymmetric toe geometry</div>
+    </div>
+  </div>
+
+  <div class="symptom-card">
+    <h3>Inner Tie Rod — Failure Symptoms</h3>
+    <div class="symptom-item">
+      <div class="sym-dot"></div>
+      <div>Excessive steering play — large amount of wheel rotation before road wheels respond</div>
+    </div>
+    <div class="symptom-item">
+      <div class="sym-dot"></div>
+      <div>Steering rack bellows boot collapsed, torn, or filled with grease (indicates seal failure)</div>
+    </div>
+    <div class="symptom-item">
+      <div class="sym-dot"></div>
+      <div>Vibration or shimmy felt through the steering wheel, especially over rough pavement</div>
+    </div>
+    <div class="symptom-item">
+      <div class="sym-dot"></div>
+      <div>Clunking felt through steering wheel when turning — transmits through the rack directly</div>
+    </div>
+    <div class="symptom-item">
+      <div class="sym-dot"></div>
+      <div>Lateral play visible at the rack end when tire is shaken — distinct from outer tie rod play</div>
+    </div>
+    <div class="symptom-item">
+      <div class="sym-dot"></div>
+      <div>Rapid outer tie rod wear or repeated toe misalignment after fresh alignment — inner failure masks the root cause</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>© 2026 Alignment Tech</div>
+  <div>Steering System Components — Reference Guide</div>
+  <div>Inner &amp; Outer Tie Rods</div>
+</footer>
+
+</body>
+</html>
