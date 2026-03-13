@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vehicle Inspection Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --dark: #111318;
+    --panel: #181c23;
+    --card: #1e2330;
+    --border: #2a2f3d;
+    --border-light: #333a4d;
+    --ok: #22c55e;
+    --ok-dim: #14532d;
+    --mon: #f59e0b;
+    --mon-dim: #78350f;
+    --imm: #ef4444;
+    --imm-dim: #7f1d1d;
+    --accent: #3b82f6;
+    --accent-dim: #1e3a5f;
+    --text: #e2e8f0;
+    --text-mid: #94a3b8;
+    --text-dim: #475569;
+    --heading: #f8fafc;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  /* ─── HEADER ─── */
+  .site-header {
+    background: var(--dark);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 2px;
+    color: var(--heading);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo span {
+    color: var(--accent);
+  }
+
+  .logo-badge {
+    background: var(--accent);
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    text-transform: uppercase;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border-light);
+    color: var(--text-mid);
+  }
+
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+
+  .btn-primary:hover { background: #2563eb; }
+
+  /* ─── MAIN LAYOUT ─── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* ─── PAGE TITLE ─── */
+  .page-title {
+    margin-bottom: 32px;
+  }
+
+  .page-title h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    letter-spacing: 3px;
+    color: var(--heading);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .page-title p {
+    color: var(--text-mid);
+    font-size: 14px;
+    font-weight: 300;
+  }
+
+  /* ─── VEHICLE INFO ─── */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  .info-field {
+    background: var(--panel);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .info-field.wide { grid-column: span 2; }
+
+  .info-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .info-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    padding: 4px 0;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .info-input:focus { border-bottom-color: var(--accent); }
+  .info-input::placeholder { color: var(--text-dim); }
+
+  /* ─── LEGEND ─── */
+  .legend {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot-ok { background: var(--ok); box-shadow: 0 0 6px var(--ok); }
+  .dot-mon { background: var(--mon); box-shadow: 0 0 6px var(--mon); }
+  .dot-imm { background: var(--imm); box-shadow: 0 0 6px var(--imm); }
+
+  /* ─── SECTION ─── */
+  .section {
+    margin-bottom: 8px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    background: var(--panel);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+
+  .section-header:hover { background: var(--card); }
+
+  .section-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    background: var(--accent-dim);
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    color: var(--heading);
+    flex: 1;
+  }
+
+  .section-count {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .section-chevron {
+    color: var(--text-dim);
+    transition: transform 0.2s;
+    font-size: 12px;
+  }
+
+  .section.collapsed .section-chevron { transform: rotate(-90deg); }
+  .section.collapsed .section-body { display: none; }
+
+  .section-body {
+    background: var(--dark);
+  }
+
+  /* ─── TABLE HEADER ─── */
+  .table-head {
+    display: grid;
+    grid-template-columns: 60px 60px 60px 1fr 280px;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--black);
+  }
+
+  .th {
+    padding: 8px 12px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+
+  .th:last-child { border-right: none; text-align: left; }
+  .th.item-col { text-align: left; }
+
+  /* ─── ROW ─── */
+  .insp-row {
+    display: grid;
+    grid-template-columns: 60px 60px 60px 1fr 280px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+    animation: fadeIn 0.3s ease both;
+  }
+
+  .insp-row:last-child { border-bottom: none; }
+  .insp-row:hover { background: rgba(59,130,246,0.04); }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .check-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 8px;
+    border-right: 1px solid var(--border);
+  }
+
+  .radio-btn {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--border-light);
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .check-cell.ok-cell .radio-btn:hover,
+  .check-cell.ok-cell .radio-btn.active {
+    border-color: var(--ok);
+    background: var(--ok-dim);
+  }
+
+  .check-cell.ok-cell .radio-btn.active::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--ok);
+  }
+
+  .check-cell.mon-cell .radio-btn:hover,
+  .check-cell.mon-cell .radio-btn.active {
+    border-color: var(--mon);
+    background: var(--mon-dim);
+  }
+
+  .check-cell.mon-cell .radio-btn.active::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--mon);
+  }
+
+  .check-cell.imm-cell .radio-btn:hover,
+  .check-cell.imm-cell .radio-btn.active {
+    border-color: var(--imm);
+    background: var(--imm-dim);
+  }
+
+  .check-cell.imm-cell .radio-btn.active::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--imm);
+  }
+
+  .item-cell {
+    padding: 12px 16px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+  }
+
+  .item-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .item-hint {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .notes-cell {
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+  }
+
+  .notes-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid transparent;
+    color: var(--text-mid);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    width: 100%;
+    outline: none;
+    padding: 4px 2px;
+    transition: border-color 0.15s;
+    resize: none;
+    line-height: 1.4;
+  }
+
+  .notes-input:focus {
+    border-bottom-color: var(--accent);
+    color: var(--text);
+  }
+
+  .notes-input::placeholder { color: var(--text-dim); font-style: italic; }
+
+  /* Row highlight by status */
+  .insp-row.status-ok { border-left: 3px solid var(--ok); }
+  .insp-row.status-mon { border-left: 3px solid var(--mon); background: rgba(245,158,11,0.03); }
+  .insp-row.status-imm { border-left: 3px solid var(--imm); background: rgba(239,68,68,0.04); }
+
+  /* ─── SUMMARY BAR ─── */
+  .summary-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--dark);
+    border-top: 1px solid var(--border);
+    padding: 12px 40px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    z-index: 100;
+  }
+
+  .summary-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-right: 8px;
+  }
+
+  .summary-stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+  }
+
+  .stat-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+
+  .progress-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    max-width: 200px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+
+  .summary-right {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+  }
+
+  /* ─── NOTES SECTION ─── */
+  .notes-section {
+    margin-top: 24px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .notes-section-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    color: var(--heading);
+  }
+
+  .notes-area {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    padding: 16px 20px;
+    min-height: 120px;
+    resize: vertical;
+    outline: none;
+    line-height: 1.6;
+  }
+
+  .notes-area::placeholder { color: var(--text-dim); font-style: italic; }
+
+  /* ─── SIG ─── */
+  .sig-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+    padding-bottom: 80px;
+  }
+
+  .sig-field {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+  }
+
+  .sig-field label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .sig-line {
+    border-bottom: 1px solid var(--border-light);
+    height: 32px;
+    position: relative;
+  }
+
+  .sig-line input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    width: 100%;
+    padding: 4px 0;
+    position: absolute;
+    bottom: 0;
+  }
+
+  /* ─── MILEAGE BADGE ─── */
+  .mile-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .badge-due    { background: rgba(239,68,68,0.15);  color: var(--imm); border: 1px solid rgba(239,68,68,0.3); }
+  .badge-soon   { background: rgba(245,158,11,0.15); color: var(--mon); border: 1px solid rgba(245,158,11,0.3); }
+  .badge-ok     { background: rgba(34,197,94,0.12);  color: var(--ok);  border: 1px solid rgba(34,197,94,0.25); }
+
+  /* ─── RECOMMENDATIONS PANEL ─── */
+  .reco-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    display: none;
+  }
+  .reco-panel.visible { display: block; }
+  .reco-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .reco-header-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    color: var(--heading);
+    flex: 1;
+  }
+  .reco-miles-display {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 3px 10px;
+    border-radius: 5px;
+  }
+  .reco-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1px;
+    background: var(--border);
+  }
+  .reco-card {
+    background: var(--dark);
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .reco-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .reco-icon.imm { background: rgba(239,68,68,0.15); }
+  .reco-icon.mon { background: rgba(245,158,11,0.15); }
+  .reco-icon.ok  { background: rgba(34,197,94,0.12);  }
+  .reco-info { flex: 1; }
+  .reco-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+  .reco-desc {
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.4;
+    font-family: 'DM Mono', monospace;
+  }
+  .reco-status {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 5px;
+  }
+  .reco-status.imm { color: var(--imm); }
+  .reco-status.mon { color: var(--mon); }
+  .reco-status.ok  { color: var(--ok);  }
+
+  .apply-btn {
+    margin: 14px 16px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  /* row glow when auto-recommended */
+  .insp-row.auto-imm { border-left: 3px solid var(--imm); background: rgba(239,68,68,0.04); }
+  .insp-row.auto-mon { border-left: 3px solid var(--mon); background: rgba(245,158,11,0.03); }
+
+  /* ─── MOBILE CARD ROW ─── */
+  .mobile-status-row {
+    display: none;
+  }
+
+  .mob-btn {
+    flex: 1;
+    padding: 7px 4px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    border: 1px solid var(--border-light);
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .mob-btn.ok-btn.active  { background: var(--ok-dim);  border-color: var(--ok);  color: var(--ok);  }
+  .mob-btn.mon-btn.active { background: var(--mon-dim); border-color: var(--mon); color: var(--mon); }
+  .mob-btn.imm-btn.active { background: var(--imm-dim); border-color: var(--imm); color: var(--imm); }
+
+  /* ─── TABLET (max 900px) ─── */
+  @media (max-width: 900px) {
+    .container { padding: 24px 16px 140px; }
+    .site-header { padding: 0 16px; height: 56px; }
+    .page-title h1 { font-size: 36px; }
+    .info-grid { grid-template-columns: 1fr 1fr; }
+    .info-field.wide { grid-column: span 2; }
+    .table-head { grid-template-columns: 52px 52px 52px 1fr 180px; }
+    .insp-row   { grid-template-columns: 52px 52px 52px 1fr 180px; }
+    .reco-grid  { grid-template-columns: 1fr 1fr; }
+    .summary-bar { padding: 10px 16px; gap: 12px; flex-wrap: wrap; }
+    .summary-right { margin-left: 0; width: 100%; justify-content: flex-end; }
+    .progress-bar { max-width: 120px; }
+  }
+
+  /* ─── MOBILE (max 600px) ─── */
+  @media (max-width: 600px) {
+    .container { padding: 16px 12px 160px; }
+    .site-header { padding: 0 12px; height: 52px; }
+    .logo { font-size: 20px; gap: 6px; }
+    .logo-badge { display: none; }
+    .header-actions .btn-ghost { display: none; }
+    .btn { padding: 7px 12px; font-size: 12px; }
+
+    .page-title { margin-bottom: 20px; }
+    .page-title h1 { font-size: 28px; letter-spacing: 2px; }
+    .page-title p { font-size: 12px; }
+
+    /* Info grid: 1 col on mobile */
+    .info-grid { grid-template-columns: 1fr; }
+    .info-field.wide { grid-column: span 1; }
+
+    /* Legend: compact */
+    .legend { gap: 6px; margin-bottom: 20px; }
+    .legend-item { padding: 6px 10px; font-size: 12px; }
+
+    /* Section header */
+    .section-header { padding: 12px 14px; gap: 8px; }
+    .section-icon { width: 28px; height: 28px; font-size: 14px; }
+    .section-title { font-size: 15px; letter-spacing: 1px; }
+
+    /* Hide desktop table layout on mobile */
+    .table-head { display: none; }
+    .insp-row {
+      display: flex;
+      flex-direction: column;
+      padding: 12px 14px;
+      gap: 10px;
+      border-left: 3px solid transparent;
+    }
+    .insp-row.status-ok  { border-left-color: var(--ok); }
+    .insp-row.status-mon { border-left-color: var(--mon); background: rgba(245,158,11,0.03); }
+    .insp-row.status-imm { border-left-color: var(--imm); background: rgba(239,68,68,0.04); }
+    .insp-row.auto-imm   { border-left-color: var(--imm); background: rgba(239,68,68,0.04); }
+    .insp-row.auto-mon   { border-left-color: var(--mon); background: rgba(245,158,11,0.03); }
+
+    /* Hide individual check cells — show inline button row instead */
+    .check-cell { display: none; }
+    .item-cell {
+      padding: 0;
+      border: none;
+    }
+    .item-name { font-size: 14px; font-weight: 600; }
+    .item-hint { font-size: 11px; }
+
+    /* Mobile status buttons row */
+    .mobile-status-row {
+      display: flex;
+      gap: 8px;
+    }
+    .mob-btn.ok-btn:not(.active):hover  { border-color: var(--ok);  color: var(--ok);  }
+    .mob-btn.mon-btn:not(.active):hover { border-color: var(--mon); color: var(--mon); }
+    .mob-btn.imm-btn:not(.active):hover { border-color: var(--imm); color: var(--imm); }
+
+    .notes-cell { padding: 0; }
+    .notes-input { font-size: 12px; border-bottom: 1px solid var(--border-light); padding: 4px 0; }
+    .notes-input:focus { border-bottom-color: var(--accent); }
+
+    /* Reco panel */
+    .reco-grid { grid-template-columns: 1fr; }
+    .reco-header { padding: 12px 14px; flex-wrap: wrap; gap: 6px; }
+    .reco-card { padding: 12px 14px; }
+    .apply-btn { flex-direction: column; align-items: stretch; padding: 12px 14px; }
+    .apply-btn span { font-size: 10px; text-align: center; }
+
+    /* Summary bar */
+    .summary-bar {
+      padding: 10px 12px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .summary-label { display: none; }
+    .progress-bar { display: none; }
+    .summary-stat { font-size: 12px; }
+    .summary-right { margin-left: 0; width: 100%; justify-content: center; gap: 6px; }
+    .summary-right .btn { flex: 1; justify-content: center; font-size: 11px; padding: 6px 8px; }
+
+    /* Notes + sig */
+    .notes-area { font-size: 12px; padding: 12px 14px; }
+    .sig-row { grid-template-columns: 1fr; gap: 10px; padding-bottom: 160px; }
+  }
+
+  /* ─── PRINT ─── */
+  @media print {
+    .site-header, .summary-bar, .header-actions { display: none; }
+    body { background: white; color: black; }
+    .container { padding: 20px; }
+    .section { break-inside: avoid; }
+    .info-field, .notes-section, .sig-field { background: #f8f8f8; }
+    .insp-row { break-inside: avoid; }
+    .radio-btn { border-color: #ccc; }
+    .radio-btn.active::after { background: #333 !important; }
+    .mobile-status-row { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="logo">AUTO<span>INSPECT</span> <span class="logo-badge">Pro</span></div>
+  <div class="header-actions">
+    <button class="btn btn-ghost" onclick="clearAll()">⟳ Reset</button>
+    <button class="btn btn-ghost" onclick="window.print()">⎙ Print</button>
+    <button class="btn btn-primary" onclick="exportReport()">↓ Export Report</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- PAGE TITLE -->
+  <div class="page-title">
+    <h1>VEHICLE INSPECTION REPORT</h1>
+    <p>Multi-Point Professional Inspection — Fill out all sections below</p>
+  </div>
+
+  <!-- VEHICLE INFO -->
+  <div class="info-grid">
+    <div class="info-field">
+      <div class="info-label">Customer Name</div>
+      <input class="info-input" type="text" placeholder="Full name" id="customerName">
+    </div>
+    <div class="info-field">
+      <div class="info-label">Year / Make / Model</div>
+      <input class="info-input" type="text" placeholder="e.g. 2015 Nissan Altima" id="vehicleInfo">
+    </div>
+    <div class="info-field">
+      <div class="info-label">Date</div>
+      <input class="info-input" type="date" id="inspDate">
+    </div>
+    <div class="info-field">
+      <div class="info-label">Work Order #</div>
+      <input class="info-input" type="text" placeholder="WO-00000" id="workOrder">
+    </div>
+    <div class="info-field">
+      <div class="info-label">Mileage</div>
+      <input class="info-input" type="text" placeholder="e.g. 139,494" id="mileage">
+    </div>
+    <div class="info-field">
+      <div class="info-label">Technician</div>
+      <input class="info-input" type="text" placeholder="Tech name" id="techName">
+    </div>
+    <div class="info-field wide">
+      <div class="info-label">VIN</div>
+      <input class="info-input" type="text" placeholder="17-character VIN" id="vin" style="font-family:'DM Mono',monospace;letter-spacing:1px">
+    </div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot dot-ok"></div> <strong>OK</strong> — Good Condition</div>
+    <div class="legend-item"><div class="legend-dot dot-mon"></div> <strong>MON</strong> — Monitor / Service Soon</div>
+    <div class="legend-item"><div class="legend-dot dot-imm"></div> <strong>IMM</strong> — Immediate Attention Required</div>
+  </div>
+
+  <!-- MILEAGE RECOMMENDATIONS PANEL -->
+  <div class="reco-panel" id="recoPanel">
+    <div class="reco-header">
+      <div style="font-size:20px">🔍</div>
+      <div class="reco-header-title">MILEAGE-BASED RECOMMENDATIONS</div>
+      <div class="reco-miles-display" id="recoMilesDisplay">—</div>
+    </div>
+    <div class="reco-grid" id="recoGrid"></div>
+    <div class="apply-btn">
+      <button class="btn btn-primary" onclick="applyRecommendations()" style="font-size:12px">⚡ Auto-Fill Recommended Status</button>
+      <span style="font-size:11px;color:var(--text-dim)">Fills inspection rows based on mileage — you can still override any item</span>
+    </div>
+  </div>
+
+  <!-- SECTIONS -->
+  <div id="sections-container"></div>
+
+  <!-- NOTES -->
+  <div class="notes-section">
+    <div class="notes-section-header">⬡ ADDITIONAL TECHNICIAN NOTES</div>
+    <textarea class="notes-area" id="additionalNotes" placeholder="Enter any additional findings, recommendations, or customer concerns here..."></textarea>
+  </div>
+
+  <!-- SIGNATURES -->
+  <div class="sig-row">
+    <div class="sig-field">
+      <label>Technician Signature</label>
+      <div class="sig-line"><input type="text" placeholder="Sign or type name"></div>
+    </div>
+    <div class="sig-field">
+      <label>Customer Signature</label>
+      <div class="sig-line"><input type="text" placeholder="Sign or type name"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SUMMARY BAR -->
+<div class="summary-bar">
+  <span class="summary-label">Progress</span>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="summary-stat"><div class="stat-dot" style="background:var(--text-dim)"></div> <span id="totalCount">0</span> / <span id="totalItems">0</span> inspected</div>
+  <div class="summary-stat"><div class="stat-dot" style="background:var(--ok)"></div> <span id="okCount" style="color:var(--ok)">0</span> OK</div>
+  <div class="summary-stat"><div class="stat-dot" style="background:var(--mon)"></div> <span id="monCount" style="color:var(--mon)">0</span> Monitor</div>
+  <div class="summary-stat"><div class="stat-dot" style="background:var(--imm)"></div> <span id="immCount" style="color:var(--imm)">0</span> Immediate</div>
+  <div class="summary-right">
+    <button class="btn btn-ghost" style="font-size:12px" onclick="expandAll()">Expand All</button>
+    <button class="btn btn-ghost" style="font-size:12px" onclick="collapseAll()">Collapse All</button>
+  </div>
+</div>
+
+<script>
+const SECTIONS = [
+  {
+    title: "ENGINE & FLUIDS", icon: "⚙️",
+    items: [
+      { name: "Engine Oil Level & Condition", hint: "Color, viscosity, contamination" },
+      { name: "Coolant Level & Condition", hint: "Check for discoloration, degradation, acidity" },
+      { name: "Coolant Flush", hint: "Component operating beyond service life if 100K+ miles" },
+      { name: "Transmission Fluid", hint: "Color, level, burnt smell" },
+      { name: "Brake Fluid Level & Condition", hint: "Moisture content, color" },
+      { name: "Power Steering Fluid", hint: "Level and condition" },
+      { name: "Windshield Washer Fluid", hint: "" },
+    ]
+  },
+  {
+    title: "BELTS & HOSES", icon: "🔩",
+    items: [
+      { name: "Serpentine Belt", hint: "Inspect for cracking, fraying, glazing — due at 90–100K" },
+      { name: "Belt Tensioner", hint: "Wear consistent with belt — same labor to replace" },
+      { name: "Idler Pulley", hint: "Bearing noise, wobble" },
+      { name: "Timing Belt / Chain", hint: "Belt typically due at 90K–105K miles" },
+      { name: "Coolant Hoses", hint: "Soft spots, swelling, leaks" },
+      { name: "Vacuum Hoses", hint: "Cracks, deterioration" },
+    ]
+  },
+  {
+    title: "BRAKES", icon: "🛑",
+    items: [
+      { name: "Front Brake Pads", hint: "Thickness (mm): ____" },
+      { name: "Rear Brake Pads / Shoes", hint: "Thickness (mm): ____" },
+      { name: "Front Rotors", hint: "Measure, check for scoring/warping" },
+      { name: "Rear Rotors / Drums", hint: "Measure, check for scoring/warping" },
+      { name: "Brake Calipers", hint: "Slide pins, seizing, leaks" },
+      { name: "Brake Lines & Hoses", hint: "Corrosion, cracks, leaks" },
+      { name: "Parking Brake", hint: "Function and cable condition" },
+    ]
+  },
+  {
+    title: "STEERING & SUSPENSION", icon: "🔧",
+    items: [
+      { name: "Struts / Shocks", hint: "Leaking, worn — often due at 100K+" },
+      { name: "CV Axle Boots", hint: "Cracks, grease leaks — common at high mileage" },
+      { name: "Ball Joints", hint: "Play, wear, noise" },
+      { name: "Tie Rods (Inner & Outer)", hint: "Play, boots, wear" },
+      { name: "Control Arm Bushings", hint: "Deterioration, play" },
+      { name: "Sway Bar Links / Bushings", hint: "Noise, wear" },
+      { name: "Wheel Alignment", hint: "Recommend if uneven tire wear noted" },
+      { name: "Wheel Bearings", hint: "Hum, vibration, play" },
+    ]
+  },
+  {
+    title: "TIRES & WHEELS", icon: "🔵",
+    items: [
+      { name: "Tire Tread — Front Left", hint: "Depth (32nds): ____" },
+      { name: "Tire Tread — Front Right", hint: "Depth (32nds): ____" },
+      { name: "Tire Tread — Rear Left", hint: "Depth (32nds): ____" },
+      { name: "Tire Tread — Rear Right", hint: "Depth (32nds): ____" },
+      { name: "Tire Condition (all)", hint: "Sidewall cracks, bulges, uneven wear" },
+      { name: "Tire Pressure (all)", hint: "PSI: FL___ FR___ RL___ RR___" },
+      { name: "Spare Tire", hint: "Condition and pressure" },
+      { name: "Lug Nuts / Torque", hint: "Proper torque, no missing" },
+    ]
+  },
+  {
+    title: "ELECTRICAL & IGNITION", icon: "⚡",
+    items: [
+      { name: "Battery", hint: "CCA test, terminals, corrosion — test at 3–5 yrs" },
+      { name: "Alternator Output", hint: "Voltage check" },
+      { name: "Spark Plugs", hint: "Iridium plugs due at 100K miles" },
+      { name: "Air Filter", hint: "Restriction, contamination" },
+      { name: "Cabin Air Filter", hint: "Restriction, debris" },
+      { name: "Warning Lights / DTC Scan", hint: "Note all active codes" },
+    ]
+  },
+  {
+    title: "EXHAUST & EMISSIONS", icon: "💨",
+    items: [
+      { name: "Exhaust System", hint: "Leaks, rust, hangers" },
+      { name: "Catalytic Converter", hint: "Heat, efficiency" },
+      { name: "Oxygen Sensors", hint: "Performance, codes" },
+    ]
+  },
+  {
+    title: "LIGHTS & SAFETY", icon: "💡",
+    items: [
+      { name: "Headlights (High & Low)", hint: "" },
+      { name: "Tail / Brake / Reverse Lights", hint: "" },
+      { name: "Turn Signals (all)", hint: "" },
+      { name: "Hazard Lights", hint: "" },
+      { name: "Windshield Wipers", hint: "Streaking, chattering" },
+      { name: "Horn", hint: "" },
+      { name: "Door Ajar / Sensors", hint: "Check latches if warning light present" },
+    ]
+  }
+];
+
+let rowData = {};
+let rowId = 0;
+
+function buildSections() {
+  const container = document.getElementById('sections-container');
+  let totalItems = 0;
+
+  SECTIONS.forEach((sec, si) => {
+    totalItems += sec.items.length;
+    const sectionEl = document.createElement('div');
+    sectionEl.className = 'section';
+    sectionEl.id = `section-${si}`;
+
+    sectionEl.innerHTML = `
+      <div class="section-header" onclick="toggleSection(${si})">
+        <div class="section-icon">${sec.icon}</div>
+        <div class="section-title">${sec.title}</div>
+        <div class="section-count">${sec.items.length} items</div>
+        <div class="section-chevron">▼</div>
+      </div>
+      <div class="section-body">
+        <div class="table-head">
+          <div class="th">OK</div>
+          <div class="th">MON</div>
+          <div class="th">IMM</div>
+          <div class="th item-col">Inspection Item</div>
+          <div class="th">Technician Notes</div>
+        </div>
+        ${sec.items.map((item, ii) => {
+          const id = `row-${si}-${ii}`;
+          rowData[id] = { status: null, notes: '' };
+          return `
+          <div class="insp-row" id="${id}" style="animation-delay:${ii * 0.03}s">
+            <div class="check-cell ok-cell">
+              <div class="radio-btn" onclick="setStatus('${id}','ok',this)" title="OK"></div>
+            </div>
+            <div class="check-cell mon-cell">
+              <div class="radio-btn" onclick="setStatus('${id}','mon',this)" title="Monitor"></div>
+            </div>
+            <div class="check-cell imm-cell">
+              <div class="radio-btn" onclick="setStatus('${id}','imm',this)" title="Immediate"></div>
+            </div>
+            <div class="item-cell">
+              <div class="item-name">${item.name}</div>
+              ${item.hint ? `<div class="item-hint">${item.hint}</div>` : ''}
+              <div class="mobile-status-row">
+                <button class="mob-btn ok-btn"  onclick="setStatusMobile('${id}','ok',this)">✓ OK</button>
+                <button class="mob-btn mon-btn" onclick="setStatusMobile('${id}','mon',this)">⚠ MON</button>
+                <button class="mob-btn imm-btn" onclick="setStatusMobile('${id}','imm',this)">✕ IMM</button>
+              </div>
+            </div>
+            <div class="notes-cell">
+              <textarea class="notes-input" rows="1" placeholder="Add notes..." 
+                oninput="rowData['${id}'].notes=this.value;autoResize(this)" 
+                onfocus="autoResize(this)">${rowData[id].notes}</textarea>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    `;
+    container.appendChild(sectionEl);
+  });
+
+  document.getElementById('totalItems').textContent = totalItems;
+  updateSummary();
+}
+
+function autoResize(ta) {
+  ta.style.height = 'auto';
+  ta.style.height = ta.scrollHeight + 'px';
+}
+
+function setStatus(id, status, btn) {
+  const row = document.getElementById(id);
+  row.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('active'));
+  row.classList.remove('status-ok','status-mon','status-imm');
+
+  if (rowData[id].status === status) {
+    rowData[id].status = null;
+    syncMobileButtons(row, null);
+  } else {
+    rowData[id].status = status;
+    btn.classList.add('active');
+    row.classList.add(`status-${status}`);
+    syncMobileButtons(row, status);
+  }
+  updateSummary();
+}
+
+function setStatusMobile(id, status, btn) {
+  const row = document.getElementById(id);
+  const allMob = row.querySelectorAll('.mob-btn');
+  const allRadio = row.querySelectorAll('.radio-btn');
+  row.classList.remove('status-ok','status-mon','status-imm','auto-imm','auto-mon');
+  allMob.forEach(b => b.classList.remove('active'));
+  allRadio.forEach(b => b.classList.remove('active'));
+
+  if (rowData[id].status === status) {
+    rowData[id].status = null;
+  } else {
+    rowData[id].status = status;
+    btn.classList.add('active');
+    row.classList.add(`status-${status}`);
+    // sync desktop radio
+    const idx = status === 'ok' ? 0 : status === 'mon' ? 1 : 2;
+    const cells = row.querySelectorAll('.check-cell');
+    const rb = cells[idx]?.querySelector('.radio-btn');
+    if (rb) rb.classList.add('active');
+  }
+  updateSummary();
+}
+
+function syncMobileButtons(row, status) {
+  row.querySelectorAll('.mob-btn').forEach(b => b.classList.remove('active'));
+  if (!status) return;
+  const map = { ok: 'ok-btn', mon: 'mon-btn', imm: 'imm-btn' };
+  const target = row.querySelector(`.${map[status]}`);
+  if (target) target.classList.add('active');
+}
+
+function updateSummary() {
+  let ok = 0, mon = 0, imm = 0, total = 0;
+  Object.values(rowData).forEach(d => {
+    if (d.status) {
+      total++;
+      if (d.status === 'ok') ok++;
+      else if (d.status === 'mon') mon++;
+      else if (d.status === 'imm') imm++;
+    }
+  });
+  const allItems = Object.keys(rowData).length;
+  document.getElementById('okCount').textContent = ok;
+  document.getElementById('monCount').textContent = mon;
+  document.getElementById('immCount').textContent = imm;
+  document.getElementById('totalCount').textContent = total;
+  document.getElementById('progressFill').style.width = `${Math.round((total / allItems) * 100)}%`;
+}
+
+function toggleSection(si) {
+  document.getElementById(`section-${si}`).classList.toggle('collapsed');
+}
+
+function expandAll() {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('collapsed'));
+}
+
+function collapseAll() {
+  document.querySelectorAll('.section').forEach(s => s.classList.add('collapsed'));
+}
+
+function clearAll() {
+  if (!confirm('Reset all inspection data?')) return;
+  Object.keys(rowData).forEach(id => {
+    rowData[id] = { status: null, notes: '' };
+    const row = document.getElementById(id);
+    row.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('active'));
+    row.querySelectorAll('.mob-btn').forEach(b => b.classList.remove('active'));
+    row.classList.remove('status-ok','status-mon','status-imm','auto-imm','auto-mon');
+    row.querySelectorAll('.notes-input').forEach(t => { t.value = ''; t.style.height = 'auto'; });
+  });
+  document.querySelectorAll('.info-input').forEach(i => { if (i.type !== 'date') i.value = ''; else i.value = ''; });
+  document.getElementById('additionalNotes').value = '';
+  updateSummary();
+}
+
+function exportReport() {
+  const lines = [];
+  lines.push('VEHICLE INSPECTION REPORT');
+  lines.push('='.repeat(50));
+  lines.push(`Customer: ${document.getElementById('customerName').value || '—'}`);
+  lines.push(`Vehicle: ${document.getElementById('vehicleInfo').value || '—'}`);
+  lines.push(`Mileage: ${document.getElementById('mileage').value || '—'}`);
+  lines.push(`Date: ${document.getElementById('inspDate').value || '—'}`);
+  lines.push(`Technician: ${document.getElementById('techName').value || '—'}`);
+  lines.push(`Work Order: ${document.getElementById('workOrder').value || '—'}`);
+  lines.push(`VIN: ${document.getElementById('vin').value || '—'}`);
+  lines.push('');
+
+  SECTIONS.forEach((sec, si) => {
+    lines.push(`\n${sec.title}`);
+    lines.push('-'.repeat(30));
+    sec.items.forEach((item, ii) => {
+      const id = `row-${si}-${ii}`;
+      const d = rowData[id];
+      const status = d.status ? d.status.toUpperCase() : 'NOT CHECKED';
+      const notes = d.notes || '';
+      lines.push(`[${status}] ${item.name}${notes ? ` — ${notes}` : ''}`);
+    });
+  });
+
+  const extra = document.getElementById('additionalNotes').value;
+  if (extra) { lines.push('\n\nADDITIONAL NOTES'); lines.push('-'.repeat(30)); lines.push(extra); }
+
+  const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `inspection_${Date.now()}.txt`;
+  a.click();
+}
+
+// ─── MILEAGE RULES ───
+// Each rule: { name, icon, rowKey (section-item index), imm: miles, mon: miles, ok: always, desc }
+const MILE_RULES = [
+  // ENGINE & FLUIDS (section 0)
+  { name: "Engine Oil",           icon: "🛢️",  si:0, ii:0, mon:5000,   imm:7500,   desc:"Change every 5K–7.5K miles" },
+  { name: "Coolant Condition",    icon: "🌡️",  si:0, ii:1, mon:50000,  imm:100000, desc:"Flush recommended at 100K+" },
+  { name: "Coolant Flush",        icon: "💧",  si:0, ii:2, mon:75000,  imm:100000, desc:"Degraded coolant corrodes engine internals" },
+  { name: "Transmission Fluid",   icon: "⚙️",  si:0, ii:3, mon:60000,  imm:90000,  desc:"Critical service — burnt fluid causes failure" },
+  { name: "Brake Fluid",          icon: "🔴",  si:0, ii:4, mon:30000,  imm:60000,  desc:"Absorbs moisture over time — reduces boiling point" },
+  { name: "Power Steering Fluid", icon: "🔄",  si:0, ii:5, mon:50000,  imm:80000,  desc:"Flush if discolored or foamy" },
+
+  // BELTS & HOSES (section 1)
+  { name: "Serpentine Belt",      icon: "〰️",  si:1, ii:0, mon:80000,  imm:100000, desc:"No warning before failure — strands vehicle" },
+  { name: "Belt Tensioner",       icon: "🔩",  si:1, ii:1, mon:80000,  imm:100000, desc:"Replace with serpentine belt — same labor" },
+  { name: "Idler Pulley",         icon: "⭕",  si:1, ii:2, mon:80000,  imm:100000, desc:"Bearing wear increases with mileage" },
+  { name: "Timing Belt",          icon: "⏱️",  si:1, ii:3, mon:85000,  imm:105000, desc:"Engine destroyer if snapped — critical replacement" },
+  { name: "Coolant Hoses",        icon: "🟠",  si:1, ii:4, mon:60000,  imm:100000, desc:"Rubber degrades — check for soft spots and swelling" },
+
+  // STEERING & SUSPENSION (section 3)
+  { name: "Struts / Shocks",      icon: "🔧",  si:3, ii:0, mon:75000,  imm:100000, desc:"Worn struts affect braking distance and handling" },
+  { name: "CV Axle Boots",        icon: "🔗",  si:3, ii:1, mon:80000,  imm:120000, desc:"Cracked boots allow grease loss and bearing damage" },
+  { name: "Ball Joints",          icon: "⚫",  si:3, ii:2, mon:80000,  imm:120000, desc:"Failure risk increases significantly at high mileage" },
+  { name: "Tie Rods",             icon: "↔️",  si:3, ii:3, mon:80000,  imm:120000, desc:"Worn tie rods cause wandering and uneven tire wear" },
+  { name: "Wheel Bearings",       icon: "🔘",  si:3, ii:7, mon:90000,  imm:130000, desc:"Humming or vibration indicates bearing wear" },
+
+  // TIRES (section 4)
+  { name: "Tire Rotation",        icon: "🔵",  si:4, ii:4, mon:5000,   imm:10000,  desc:"Rotate every 5K–7.5K miles for even wear" },
+
+  // ELECTRICAL (section 5)
+  { name: "Battery",              icon: "🔋",  si:5, ii:0, mon:50000,  imm:80000,  desc:"Most batteries fail between 3–5 years / 50K–80K" },
+  { name: "Spark Plugs",          icon: "⚡",  si:5, ii:2, mon:90000,  imm:105000, desc:"Iridium plugs last 100K — misfires reduce efficiency" },
+  { name: "Air Filter",           icon: "🌬️",  si:5, ii:3, mon:15000,  imm:30000,  desc:"Restricted filter reduces fuel economy and power" },
+  { name: "Cabin Air Filter",     icon: "💨",  si:5, ii:4, mon:15000,  imm:25000,  desc:"Affects HVAC performance and cabin air quality" },
+];
+
+let currentMiles = 0;
+let pendingRecos = [];
+
+function parseMiles(val) {
+  return parseInt(val.replace(/[^0-9]/g, ''), 10) || 0;
+}
+
+function getLevel(miles, rule) {
+  if (miles >= rule.imm) return 'imm';
+  if (miles >= rule.mon) return 'mon';
+  return 'ok';
+}
+
+function buildRecommendations(miles) {
+  currentMiles = miles;
+  const panel = document.getElementById('recoPanel');
+  const grid = document.getElementById('recoGrid');
+  const display = document.getElementById('recoMilesDisplay');
+
+  if (!miles) { panel.classList.remove('visible'); return; }
+
+  display.textContent = miles.toLocaleString() + ' miles';
+  panel.classList.add('visible');
+
+  pendingRecos = MILE_RULES.map(r => ({ ...r, level: getLevel(miles, r) }));
+
+  // Sort: imm first, then mon, then ok
+  const order = { imm: 0, mon: 1, ok: 2 };
+  pendingRecos.sort((a,b) => order[a.level] - order[b.level]);
+
+  grid.innerHTML = pendingRecos.map(r => `
+    <div class="reco-card">
+      <div class="reco-icon ${r.level}">${r.icon}</div>
+      <div class="reco-info">
+        <div class="reco-name">${r.name}</div>
+        <div class="reco-desc">${r.desc}</div>
+        <div class="reco-status ${r.level}">
+          ${r.level === 'imm' ? '⚠ IMMEDIATE — Past Due' : r.level === 'mon' ? '◉ MONITOR — Service Soon' : '✓ OK — Within Interval'}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function applyRecommendations() {
+  if (!pendingRecos.length) return;
+  let applied = 0;
+  pendingRecos.forEach(r => {
+    const id = `row-${r.si}-${r.ii}`;
+    const row = document.getElementById(id);
+    if (!row) return;
+
+    // clear previous
+    row.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('active'));
+    row.classList.remove('status-ok','status-mon','status-imm','auto-imm','auto-mon');
+    rowData[id].status = r.level;
+
+    // activate correct radio
+    const cells = row.querySelectorAll('.check-cell');
+    const idx = r.level === 'ok' ? 0 : r.level === 'mon' ? 1 : 2;
+    const btn = cells[idx]?.querySelector('.radio-btn');
+    if (btn) btn.classList.add('active');
+
+    row.classList.add(`status-${r.level}`);
+    if (r.level === 'imm') row.classList.add('auto-imm');
+    if (r.level === 'mon') row.classList.add('auto-mon');
+    syncMobileButtons(row, r.level);
+
+    // prefill note if empty
+    const ta = row.querySelector('.notes-input');
+    if (ta && !ta.value) {
+      ta.value = r.desc;
+      rowData[id].notes = r.desc;
+      autoResize(ta);
+    }
+    applied++;
+  });
+  updateSummary();
+
+  // Flash confirmation
+  const btn = document.querySelector('.apply-btn .btn-primary');
+  btn.textContent = `✓ Applied ${applied} recommendations`;
+  btn.style.background = 'var(--ok)';
+  setTimeout(() => { btn.textContent = '⚡ Auto-Fill Recommended Status'; btn.style.background = ''; }, 2500);
+}
+
+// Listen to mileage input
+document.getElementById('mileage').addEventListener('input', function() {
+  const miles = parseMiles(this.value);
+  buildRecommendations(miles);
+});
+
+// Set today's date
+document.getElementById('inspDate').value = new Date().toISOString().split('T')[0];
+
+buildSections();
+</script>
+</body>
+</html>
